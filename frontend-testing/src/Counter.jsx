@@ -5,7 +5,7 @@ export default function Counter() {
 
   return (
     <>
-      <h1 data-testid="counter">Count {count}</h1>
+      <h1 data-testid="counter">{count}</h1>
       <div className="buttons">
         <button
           style={{ cursor: "pointer", margin: "0px 10px", padding: "10px" }}

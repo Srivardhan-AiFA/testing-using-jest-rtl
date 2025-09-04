@@ -1,5 +1,5 @@
-import "./App.css";
-import Counter from "./Counter";
+import './App.css'
+import Counter from './Counter'
 
 function App() {
 
@@ -7,7 +7,7 @@ function App() {
     <>
       <Counter/>
     </>
-  );
+  )
 }
 
-export default App;
+export default App
