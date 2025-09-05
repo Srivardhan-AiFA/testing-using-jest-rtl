@@ -1,4 +1,4 @@
-# Deep Dive Into Component Testing Learnings
+# Deep Dive Into React Component Testing Learnings
 
 This repository contains tests for several React components using **React Testing Library**, **Jest**, and **user-event**. Below is a summary of key learnings from writing and running these tests.
 
@@ -8,7 +8,7 @@ This repository contains tests for several React components using **React Testin
 
 ### 1. Basic Rendering and Querying Elements
 
-- Used `render()` to mount components in a virtual DOM for testing.
+- Use `render()` to mount components in a virtual DOM for testing.
 - Query elements by roles (`getByRole`, `queryByRole`) and text (`getByText`).
 - Use assertions like `toBeInTheDocument()` to verify element presence.
 - Understand the difference between `getBy*` (throws error if not found) and `queryBy*` (returns null if not found).
