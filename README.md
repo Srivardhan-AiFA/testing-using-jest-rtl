@@ -8,7 +8,7 @@ This repository contains tests for several React components using **React Testin
 
 ### 1. Basic Rendering and Querying Elements
 
-- Use `render()` to mount components in a virtual DOM for testing.
+- Used `render()` to mount components in a virtual DOM for testing.
 - Query elements by roles (`getByRole`, `queryByRole`) and text (`getByText`).
 - Use assertions like `toBeInTheDocument()` to verify element presence.
 - Understand the difference between `getBy*` (throws error if not found) and `queryBy*` (returns null if not found).
