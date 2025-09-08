@@ -10,3 +10,5 @@ export type UserType = {
 export interface AuthRequest extends Request {
   userId?: string | JwtPayload;
 }
+
+export type userId = string | JwtPayload | undefined;
