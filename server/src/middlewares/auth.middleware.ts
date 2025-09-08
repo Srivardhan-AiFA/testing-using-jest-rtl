@@ -1,10 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { compareToken } from "../utils/jwt.utils";
 import { JwtPayload } from "jsonwebtoken";
-
-export interface AuthRequest extends Request {
-  userId?: string | JwtPayload;
-}
+import { AuthRequest } from "../types/user.type";
 
 export const protectedRoute = (
   req: AuthRequest,

@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { Note } from "../models/notes.model";
-import { AuthRequest } from "../middlewares/auth.middleware";
+import { AuthRequest } from "../types/user.type";
 
 export const createNote = async (req: AuthRequest, res: Response) => {
   try {
@@ -28,5 +28,21 @@ export const getAllNotes = async (req: AuthRequest, res: Response) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internale Server Error" });
+  }
+};
+
+export const getNote = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const note = await Note.findOne({ _id: id, userId: req.userId });
+
+    if (!note) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+    return res.status(200).json({ note });
+  } catch (error) {
+    console.error("Get note error:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
