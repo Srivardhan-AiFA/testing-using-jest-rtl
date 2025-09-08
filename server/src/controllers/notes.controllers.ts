@@ -17,3 +17,16 @@ export const createNote = async (req: AuthRequest, res: Response) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const getAllNotes = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId;
+
+    const notes = await Note.find({ userId });
+
+    return res.status(200).send(notes);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internale Server Error" });
+  }
+};
