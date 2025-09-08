@@ -8,12 +8,14 @@ import { connectDB } from "./config/db.config";
 // routes
 import authRoutes from "./routes/auth.routes";
 import noteRoutes from "./routes/notes.routes";
+import { globalLimiter } from "./middlewares/rateLimit";
 
 dotenv.config();
 connectDB();
 
 const app = express();
 
+app.use(globalLimiter);
 app.use(cors());
 app.use(express.json());
 

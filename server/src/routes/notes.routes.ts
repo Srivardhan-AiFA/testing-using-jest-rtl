@@ -9,25 +9,28 @@ import {
   getNote,
   updateNote,
 } from "../controllers/notes.controllers";
+import { notesLimiter } from "../middlewares/rateLimit";
 
 const router = Router();
 
 router.post(
   "/create",
+  notesLimiter,
   protectedRoute,
   noteValidator,
   validateRequest,
   createNote
 );
-router.get("/getall", protectedRoute, getAllNotes);
-router.get("/get/:id", protectedRoute, getNote);
+router.get("/getall", notesLimiter, protectedRoute, getAllNotes);
+router.get("/get/:id", notesLimiter, protectedRoute, getNote);
 router.put(
   "/update/:id",
+  notesLimiter,
   protectedRoute,
   noteValidator,
   validateRequest,
   updateNote
 );
-router.delete("/delete/:id", protectedRoute, deleteNote);
+router.delete("/delete/:id", notesLimiter, protectedRoute, deleteNote);
 
 export default router;
