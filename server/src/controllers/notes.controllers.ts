@@ -11,9 +11,9 @@ export const createNote = async (req: AuthRequest, res: Response) => {
       title,
       content,
     });
-    return res.status(201).json({ note: note });
+    return res.status(201).send(note);
   } catch (error) {
-    console.group(error);
+    console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };

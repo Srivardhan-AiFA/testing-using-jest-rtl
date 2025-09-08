@@ -10,8 +10,8 @@ const noteSchema = new mongoose.Schema<NoteType>(
     },
     title: { type: String, required: true },
     content: { type: String, required: true },
-    // category: { type: String, required: true },
-    // isFavorite: { type: Boolean, default: false },
+    category: { type: String, default: "all" },
+    isFavorite: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
