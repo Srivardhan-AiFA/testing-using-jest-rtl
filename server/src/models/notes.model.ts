@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { Note } from "../types/note.types";
+import { NoteType } from "../types/note.types";
 
-const noteSchema = new mongoose.Schema<Note>(
+const noteSchema = new mongoose.Schema<NoteType>(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -10,10 +10,10 @@ const noteSchema = new mongoose.Schema<Note>(
     },
     title: { type: String, required: true },
     content: { type: String, required: true },
-    category: { type: String, required: true },
-    isFavorite: { type: Boolean, default: false },
+    // category: { type: String, required: true },
+    // isFavorite: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
 
-export default mongoose.model<Note>("Note", noteSchema);
+export const Note = mongoose.model<NoteType>("Note", noteSchema);

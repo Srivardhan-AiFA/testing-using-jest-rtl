@@ -1,4 +1,4 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 export const generateToken = (userId: string) => {
   const SECRET = process.env.JWT_SECRET;

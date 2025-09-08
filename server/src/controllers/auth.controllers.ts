@@ -3,16 +3,9 @@ import { User } from "../models/users.model";
 import { generateToken } from "../utils/jwt.utils";
 import { comparePassword, hashPassword } from "../utils/bcrypt.utils";
 
-export const signup = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const signup = async (req: Request, res: Response) => {
   try {
     const { username, email, password } = req.body;
-
-    if (!username || !email || !password) {
-      return res.status(400).json({ message: "Please provide all details" });
-    }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -26,7 +19,7 @@ export const signup = async (
     const user = await User.create({
       username,
       email,
-      password: hashedPassword,
+      password: await hashedPassword,
     });
 
     const token = generateToken(user._id.toString());
@@ -36,6 +29,8 @@ export const signup = async (
         _id: user._id,
         username: user.username,
         email: user.email,
+        password: password,
+        hashedPassword: hashedPassword,
       },
       token,
     });
@@ -48,14 +43,12 @@ export const signup = async (
 export const signin = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ message: "Please provide all details" });
-    }
+
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
-    const isPasswordValid = comparePassword(password, user.password);
+    const isPasswordValid = await comparePassword(password, user.password);
     if (!isPasswordValid) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
@@ -65,6 +58,8 @@ export const signin = async (req: Request, res: Response) => {
         _id: user._id,
         username: user.username,
         email: user.email,
+        password: user.password,
+        isPasswordValid: isPasswordValid,
       },
       token,
     });

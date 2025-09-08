@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-import { verify } from "../utils/jwt.utils";
+import { compareToken } from "../utils/jwt.utils";
+import { JwtPayload } from "jsonwebtoken";
 
 export interface AuthRequest extends Request {
-  userId?: string;
+  userId?: string | JwtPayload;
 }
 
-export const auth = (
+export const protectedRoute = (
   req: AuthRequest,
   res: Response,
   next: NextFunction
@@ -18,14 +19,14 @@ export const auth = (
     }
 
     const token = authHeader.split(" ")[1];
-    const decoded = verify(token) as { id: string };
+    const decoded = compareToken(token);
 
-    if (!decoded?.id) {
+    if (!decoded) {
       res.status(401).json({ message: "Invalid token" });
       return;
     }
 
-    req.userId = decoded.id;
+    req.userId = decoded;
     next();
   } catch (err) {
     res.status(401).json({ message: "Invalid token" });
