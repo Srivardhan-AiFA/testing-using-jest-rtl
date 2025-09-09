@@ -56,10 +56,8 @@ export const signin = async (req: Request, res: Response) => {
         _id: user._id,
         username: user.username,
         email: user.email,
-        password: user.password,
-        isPasswordValid: isPasswordValid,
+        token,
       },
-      token,
     });
   } catch (error) {
     console.error("Signin error:", error);

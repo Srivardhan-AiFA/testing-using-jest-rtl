@@ -1,29 +1,37 @@
 import { Eye, EyeClosed, GalleryVerticalEnd } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import type { User } from "@/types/user.type";
-// import { signin } from "@/features/auth/authSlice";
 import { useDispatch } from "react-redux";
+import type { AppDispatch } from "@/app/store";
+import { signinAPI } from "@/features/auth/authSlice";
 
 export function SigninForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const [eye, setEye] = useState<true | false>(false);
-  const [user, setUser] = useState<User>();
-
-  const dispatch = useDispatch();
+  const [errorMessage, setError] = useState<string>();
+  const [user, setUser] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
 
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    // dispatch(signin(user as User));
-    navigate("/dashboard");
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleSubmit = async () => {
+    try {
+      await dispatch(signinAPI(user)).unwrap();
+      navigate("/dashboard");
+    } catch (error) {
+      setError(error as string);
+    }
   };
 
   return (
@@ -57,7 +65,7 @@ export function SigninForm({
                 placeholder="m@example.com"
                 required
                 onChange={(e) => {
-                  setUser({ ...user, email: e.target.value } as User);
+                  setUser({ ...user, email: e.target.value });
                 }}
                 value={user?.email}
               />
@@ -72,7 +80,7 @@ export function SigninForm({
                   required
                   className="pr-10"
                   onChange={(e) => {
-                    setUser({ ...user, password: e.target.value } as User);
+                    setUser({ ...user, password: e.target.value });
                   }}
                 />
                 <div className="absolute inset-y-0 right-3 flex items-center">
@@ -108,6 +116,9 @@ export function SigninForm({
         By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
         and <a href="#">Privacy Policy</a>.
       </div>
+      {errorMessage && (
+        <p className="text-red-500 text-sm text-center">{errorMessage}</p>
+      )}
     </div>
   );
 }

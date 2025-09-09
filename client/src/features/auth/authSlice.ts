@@ -4,7 +4,6 @@ import axios from "axios";
 interface AuthState {
   user: {
     _id: string;
-    username: string;
     email: string;
     token: string;
   } | null;
@@ -26,6 +25,21 @@ export const signupAPI = createAsyncThunk<
   try {
     const res = await axios.post(
       `${import.meta.env.VITE_BACKEND_URL}/auth/signup`,
+      userData
+    );
+    return (res.data as { user: AuthState["user"] }).user;
+  } catch (err: any) {
+    return rejectWithValue(err.response?.data?.message || "Signup failed");
+  }
+});
+
+export const signinAPI = createAsyncThunk<
+  AuthState["user"],
+  { username: string; email: string; password: string }
+>("auth/signinAPI", async (userData, { rejectWithValue }) => {
+  try {
+    const res = await axios.post(
+      `${import.meta.env.VITE_BACKEND_URL}/auth/signin`,
       userData
     );
     return (res.data as { user: AuthState["user"] }).user;
@@ -66,6 +80,27 @@ export const authSlice = createSlice({
         state.user = null;
         state.error =
           action.payload || action.error.message || "Something went wrong";
+      })
+
+      .addCase(signinAPI.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(signinAPI.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.error = null;
+        if (action.payload?.token) {
+          localStorage.setItem("token", action.payload.token);
+        }
+      })
+      .addCase(signinAPI.rejected, (state, action) => {
+        state.loading = false;
+        state.user = null;
+        state.error =
+          (typeof action.payload === "string"
+            ? action.payload
+            : action.error.message) || "Something went wrong";
       });
   },
 });
