@@ -4,9 +4,11 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import type { User } from "@/types/user.type";
+// import { signin } from "@/features/auth/authSlice";
+import { useDispatch } from "react-redux";
 
 export function SigninForm({
   className,
@@ -14,9 +16,23 @@ export function SigninForm({
 }: React.ComponentProps<"div">) {
   const [eye, setEye] = useState<true | false>(false);
   const [user, setUser] = useState<User>();
+
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
+
+  const handleSubmit = () => {
+    // dispatch(signin(user as User));
+    navigate("/dashboard");
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <form>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault(), handleSubmit();
+        }}
+      >
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
             <a
@@ -43,6 +59,7 @@ export function SigninForm({
                 onChange={(e) => {
                   setUser({ ...user, email: e.target.value } as User);
                 }}
+                value={user?.email}
               />
             </div>
             <div className="grid gap-3">

@@ -1,6 +1,15 @@
 export type User = {
   id: string;
-  name: string;
+  username: string;
   email: string;
   token: string;
+  password?: string;
+
+  error: string;
+};
+
+export type Note = {
+  id: string;
+  title: string;
+  content: string;
 };

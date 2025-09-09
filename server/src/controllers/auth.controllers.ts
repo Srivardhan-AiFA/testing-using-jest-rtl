@@ -29,10 +29,8 @@ export const signup = async (req: Request, res: Response) => {
         _id: user._id,
         username: user.username,
         email: user.email,
-        password: password,
-        hashedPassword: hashedPassword,
+        token,
       },
-      token,
     });
   } catch (error) {
     console.error("Signup error:", error);
