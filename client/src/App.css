@@ -1,0 +1,10 @@
+textarea {
+  overflow: auto; /* Ensures content can still scroll */
+  -ms-overflow-style: none; /* For Internet Explorer and Edge */
+  scrollbar-width: none; /* For Firefox */
+}
+
+/* For Chrome, Safari, and Opera */
+textarea::-webkit-scrollbar {
+  display: none;
+}

@@ -8,8 +8,20 @@ export type User = {
   error: string;
 };
 
-export type Note = {
-  id: string;
+export type SingleNote = {
+  _id: string;
   title: string;
   content: string;
+  category: string;
+  isFavorite: boolean;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type Note = {
+  loading: boolean;
+  error: string | null;
+  notes: SingleNote[];
+  message: string;
 };

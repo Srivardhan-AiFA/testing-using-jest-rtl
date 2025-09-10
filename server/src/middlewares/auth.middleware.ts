@@ -23,8 +23,12 @@ export const protectedRoute = (
       return;
     }
 
-    req.userId = decoded;
-    next();
+    if (typeof decoded === "object" && "userId" in decoded) {
+      req.userId = (decoded as JwtPayload & { userId: string }).userId;
+      next();
+    } else {
+      res.status(401).json({ message: "Invalid token payload" });
+    }
   } catch (err) {
     res.status(401).json({ message: "Invalid token" });
   }

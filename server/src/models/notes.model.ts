@@ -8,7 +8,7 @@ const noteSchema = new mongoose.Schema<NoteType>(
       ref: "User",
       required: true,
     },
-    title: { type: String, required: true },
+    title: { type: String },
     content: { type: String, required: true },
     category: { type: String, default: "all" },
     isFavorite: { type: Boolean, default: false },
