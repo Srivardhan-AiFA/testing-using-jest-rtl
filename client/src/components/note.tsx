@@ -1,5 +1,5 @@
 import type { SingleNote } from "@/types/user.type";
-import { SquarePen, Trash } from "lucide-react";
+import { Heart, HeartOff, SquarePen, Trash } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,12 @@ import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { Button } from "./ui/button";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "@/app/store";
-import { deleteNote, editNote } from "@/features/notes/noteSlice";
+import {
+  // addCategory,
+  addFavorite,
+  deleteNote,
+  editNote,
+} from "@/features/notes/noteSlice";
 
 type NoteProps = {
   note: SingleNote;
@@ -28,6 +33,7 @@ export default function Note({ note, bgColor }: NoteProps) {
   const [updatedNote, setUpdatedNote] = useState({
     title: note.title,
     content: note.content,
+    category: note.category,
   });
 
   useEffect(() => {
@@ -43,7 +49,7 @@ export default function Note({ note, bgColor }: NoteProps) {
   };
 
   const handleUpdate = (
-    note: { title: string; content: string },
+    note: { title: string; content: string; category: string },
     id: string
   ) => {
     dispatch(editNote({ note, id }));
@@ -53,6 +59,10 @@ export default function Note({ note, bgColor }: NoteProps) {
     dispatch(deleteNote({ id }));
   };
 
+  const handleFav = (id: string) => {
+    dispatch(addFavorite({ id }));
+  };
+
   return (
     <div
       className="border py-2 px-3 rounded-md w-1/4"
@@ -60,7 +70,7 @@ export default function Note({ note, bgColor }: NoteProps) {
     >
       <div className="flex justify-between items-center">
         <h3 className="outfit text-xl">{note.title}</h3>
-        <div className="flex mt-2">
+        <div className="flex mt-2 items-center">
           <div>
             <Dialog>
               <DialogTrigger>
@@ -91,6 +101,20 @@ export default function Note({ note, bgColor }: NoteProps) {
                       rows={10}
                       placeholder="Take a note..."
                     />
+                    <div className="flex gap-1">
+                      <span className="flex gap-1">Category: </span>
+                      <input
+                        type="text"
+                        value={updatedNote.category}
+                        className="w-11/12 border-0 outline-0 outfit"
+                        onChange={(e) => {
+                          setUpdatedNote({
+                            ...updatedNote,
+                            category: e.target.value.toLowerCase(),
+                          });
+                        }}
+                      />
+                    </div>
                   </DialogDescription>
                 </DialogHeader>
                 <DialogTrigger>
@@ -112,7 +136,9 @@ export default function Note({ note, bgColor }: NoteProps) {
               <DialogContent>
                 <DialogHeader>
                   <DialogDescription className="flex items-center">
-                    <p className="mr-3">Are you sure you want to delete?</p>
+                    <span className="mr-3">
+                      Are you sure you want to delete?
+                    </span>
                     <DialogTrigger>
                       <span
                         className="text-md px-2 py-1 rounded bg-red-600 text-gray-200 cursor-pointer"
@@ -128,6 +154,17 @@ export default function Note({ note, bgColor }: NoteProps) {
               </DialogContent>
             </Dialog>
           </div>
+
+          <button
+            className={`ml-2 mb-0.5 cursor-pointer ${
+              note.isFavorite ? "bg-[#FFD700]" : "bg-gray-100"
+            } rounded-full p-0.5`}
+            onClick={() => {
+              handleFav(note._id);
+            }}
+          >
+            {note.isFavorite ? <HeartOff size={14} /> : <Heart size={15} />}
+          </button>
         </div>
       </div>
       <div className="mt-2">

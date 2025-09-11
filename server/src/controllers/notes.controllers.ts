@@ -53,11 +53,11 @@ export const updateNote = async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
     const userId = req.userId;
 
-    const { title, content } = req.body;
+    const { title, content, category } = req.body;
 
     const updatedNote = await Note.findOneAndUpdate(
       { _id: id, userId },
-      { title, content },
+      { title, content, category },
       { new: true }
     );
     if (!updatedNote)

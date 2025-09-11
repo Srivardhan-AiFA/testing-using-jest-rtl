@@ -20,11 +20,17 @@ export default function Dashboard() {
   const { notes, loading, error } = useSelector(
     (state: RootState) => state.notes
   );
-  console.log("notes", notes);
+  const [filteredNotes, setFilteredNotes] = useState<SingleNote[]>(notes);
+
+  const [showFavoritesButton, setShowFavoritesButton] = useState<boolean>(true);
 
   const [text, setText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const dispatch = useDispatch<AppDispatch>();
+
+  const categories: string[] = Array.from(
+    new Set(notes.map((note) => note.category).sort())
+  );
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -32,6 +38,10 @@ export default function Dashboard() {
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [text]);
+
+  useEffect(() => {
+    setFilteredNotes(notes);
+  }, [notes]);
 
   useEffect(() => {
     dispatch(getNotes());
@@ -49,8 +59,24 @@ export default function Dashboard() {
     setText("");
   };
 
+  const handleFilter = (category: string) => {
+    setShowFavoritesButton(true);
+    if (category === "favorite") {
+      setShowFavoritesButton(false);
+      setFilteredNotes(notes.filter((note) => note.isFavorite));
+    } else if (category === "all") {
+      setFilteredNotes(notes);
+    } else {
+      setFilteredNotes(notes.filter((note) => note.category === category));
+    }
+  };
+
+  const handleFilterWithFavorite = () => {
+    setFilteredNotes(filteredNotes.filter((note) => note.isFavorite));
+  };
+
   return (
-    <div>
+    <div className="px-20">
       <div className="border-2 max-w-1/2 m-auto mt-10 p-3 rounded-md">
         <form
           onSubmit={(e) => {
@@ -75,29 +101,74 @@ export default function Dashboard() {
           />
           <Button
             type="submit"
-            className="px-2 bg-[#ea4335] hover:bg-[#eb3d2d] text-xs cursor-pointer rounded-md mt-2"
+            className="px-4 bg-[#77a4eb] hover:bg-blue-400 text-gray-900 outfit text-xs cursor-pointer rounded mt-2"
           >
             Add Note
           </Button>
         </form>
       </div>
 
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-
-      {!loading && !error && notes.length === 0 && (
-        <p className="text-gray-500 text-center mt-4">No notes available</p>
-      )}
-
-      {notes.length > 0 && (
-        <div className="flex flex-wrap gap-4 mt-6 justify-center">
-          {notes.map((note, index) => {
-            const colors = ["#77a4eb", "#56df7a", "#f3c849", "#f36457"];
-            const bgColor = colors[index % colors.length];
-            return <Note key={index} note={note} bgColor={bgColor} />;
+      <div>
+        <div className="flex flex-wrap gap-4 mt-6 px-40">
+          <h4 className="mt-1.5 font-semibold text-sm">Categories:</h4>
+          {categories.map((category, index) => {
+            return (
+              <div key={index}>
+                <p
+                  onClick={() => {
+                    handleFilter(category);
+                  }}
+                  className="px-3 py-1 cursor-pointer rounded-2xl border-1 min-w-16 text-center text-xs font-semibold mt-1 uppercase"
+                >
+                  {category}
+                </p>
+              </div>
+            );
           })}
+          <span className="border-r-2 mt-1" />
+          <p
+            onClick={() => {
+              handleFilter("favorite");
+            }}
+            className="px-3 py-1 cursor-pointer rounded-2xl border-1 min-w-16 text-center text-xs font-semibold mt-1 uppercase bg-[#f36457]"
+          >
+            Favorites
+          </p>
         </div>
-      )}
+      </div>
+
+      <div className="reletive mb-10">
+        <div className="mt-6">
+          {showFavoritesButton ? (
+            <Button
+              className="cursor-pointer absolute bg-[#56df7a] text-gray-900 mt-0.5"
+              onClick={handleFilterWithFavorite}
+            >
+              Favorites
+            </Button>
+          ) : (
+            ""
+          )}
+        </div>
+
+        {/* {loading && <p>Loading...</p>} */}
+
+        {error && <p className="text-red-500">{error}</p>}
+
+        {!loading && !error && filteredNotes.length === 0 && (
+          <p className="text-gray-500 text-center mt-4">No notes available</p>
+        )}
+
+        {filteredNotes.length > 0 && (
+          <div className="flex flex-wrap gap-4 mt-6 justify-center">
+            {filteredNotes.map((note, index) => {
+              const colors = ["#77a4eb", "#56df7a", "#f3c849", "#f36457"];
+              const bgColor = colors[index % colors.length];
+              return <Note key={index} note={note} bgColor={bgColor} />;
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

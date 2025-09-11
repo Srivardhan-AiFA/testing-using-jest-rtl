@@ -9,6 +9,62 @@ const initialState: Note = {
   message: "",
 };
 
+export const addFavorite = createAsyncThunk<
+  { message: string; id: string },
+  { id: string },
+  { rejectValue: string }
+>("notes/addFavorite", async ({ id }, { rejectWithValue }) => {
+  try {
+    const token = localStorage.getItem("token");
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const res = await axios.put(
+      `${import.meta.env.VITE_BACKEND_URL}/services/addtofav/${id}`,
+      {},
+      config
+    );
+    return { message: res.data, id } as { message: string; id: string };
+  } catch (err: any) {
+    return rejectWithValue(
+      err.response?.data?.message || "Getting Notes Failed"
+    );
+  }
+});
+
+export const addCategory = createAsyncThunk<
+  { message: string; id: string; category: string },
+  { id: string; category: string },
+  { rejectValue: string }
+>("notes/addCategory", async ({ id, category }, { rejectWithValue }) => {
+  try {
+    const token = localStorage.getItem("token");
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const res = await axios.put(
+      `${
+        import.meta.env.VITE_BACKEND_URL
+      }/services/addtofav/${id}?category=${category}`,
+      {},
+      config
+    );
+    return { message: res.data, id, category } as {
+      message: string;
+      id: string;
+      category: string;
+    };
+  } catch (err: any) {
+    return rejectWithValue(
+      err.response?.data?.message || "Getting Notes Failed"
+    );
+  }
+});
+
 export const getNotes = createAsyncThunk<
   SingleNote[],
   void,
@@ -34,11 +90,10 @@ export const getNotes = createAsyncThunk<
 });
 export const editNote = createAsyncThunk<
   { message: string; updatedNote: SingleNote },
-  { note: { title: string; content: string }; id: string },
+  { note: { title: string; content: string; category: string }; id: string },
   { rejectValue: string }
 >("notes/editNote", async ({ note, id }, { rejectWithValue }) => {
   try {
-    console.log(note, id);
     const token = localStorage.getItem("token");
     const config = {
       headers: {
@@ -118,7 +173,6 @@ export const noteSlice = createSlice({
       })
       .addCase(addNote.fulfilled, (state, action) => {
         state.loading = false;
-        console.log("Inside the fufill ", action.payload);
         state.notes.push(action.payload as SingleNote);
       })
       .addCase(addNote.rejected, (state, action) => {
@@ -189,6 +243,52 @@ export const noteSlice = createSlice({
           (action.payload as string) ||
           action.error.message ||
           "unable to add Note";
+      })
+
+      .addCase(addFavorite.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addFavorite.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload.message;
+
+        const addFav = action.payload;
+        const index = state.notes.findIndex((n) => n._id === addFav.id);
+
+        if (index !== -1) {
+          state.notes[index].isFavorite = !state.notes[index].isFavorite;
+        }
+      })
+      .addCase(addFavorite.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          (action.payload as string) ||
+          action.error.message ||
+          "unable to add Favriote";
+      })
+
+      .addCase(addCategory.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addCategory.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload.message;
+
+        const addFav = action.payload;
+        const index = state.notes.findIndex((n) => n._id === addFav.id);
+
+        if (index !== -1) {
+          state.notes[index].category = action.payload.category;
+        }
+      })
+      .addCase(addCategory.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          (action.payload as string) ||
+          action.error.message ||
+          "unable to add Category";
       });
   },
 });
