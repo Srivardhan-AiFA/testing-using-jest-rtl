@@ -16,7 +16,7 @@ import { globalLimiter } from "./middlewares/rateLimit";
 dotenv.config();
 connectDB();
 
-const app = express();
+export const app = express();
 
 app.use(globalLimiter);
 app.use(cors());

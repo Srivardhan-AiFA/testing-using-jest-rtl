@@ -141,7 +141,7 @@ export default function Dashboard() {
         <div className="mt-6">
           {showFavoritesButton ? (
             <Button
-              className="cursor-pointer absolute bg-[#56df7a] text-gray-900 mt-0.5"
+              className="cursor-pointer absolute bg-[#56df7a] hover:bg-green-400 text-gray-900 mt-0.5"
               onClick={handleFilterWithFavorite}
             >
               Favorites
