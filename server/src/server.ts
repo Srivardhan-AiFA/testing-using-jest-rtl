@@ -7,8 +7,7 @@ import { connectDB } from "./config/db.config";
 
 // routes
 import authRoutes from "./routes/auth.routes";
-import noteRoutes from "./routes/notes.routes";
-import servicesRoutes from "./routes/services.routes";
+import calendarEventsRoutes from "./routes/calendar.routes";
 
 // rate limiters
 import { globalLimiter } from "./middlewares/rateLimit";
@@ -22,9 +21,9 @@ app.use(globalLimiter);
 app.use(cors());
 app.use(express.json());
 
+app.get("/", (_, res) => res.send("Hello"));
 app.use("/auth", authRoutes);
-app.use("/notes", noteRoutes);
-app.use("/services", servicesRoutes);
+app.use("/calendar", calendarEventsRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
