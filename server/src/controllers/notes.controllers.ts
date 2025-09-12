@@ -4,12 +4,13 @@ import { AuthRequest } from "../types/user.type";
 
 export const createNote = async (req: AuthRequest, res: Response) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, category } = req.body;
     const userId = req.userId;
     const note = await Note.create({
       userId,
       title,
       content,
+      category,
     });
     return res.status(201).send(note);
   } catch (error) {

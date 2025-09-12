@@ -12,12 +12,18 @@ import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { Button } from "./ui/button";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "@/app/store";
+import { addFavorite, deleteNote, editNote } from "@/features/notes/noteSlice";
 import {
-  // addCategory,
-  addFavorite,
-  deleteNote,
-  editNote,
-} from "@/features/notes/noteSlice";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type NoteProps = {
   note: SingleNote;
@@ -129,51 +135,58 @@ export default function Note({ note, bgColor }: NoteProps) {
             </Dialog>
           </div>
           <div>
-            <Dialog>
-              <DialogTrigger>
+            <AlertDialog>
+              <AlertDialogTrigger>
                 <Trash size={15} className="ml-3 cursor-pointer" />
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogDescription className="flex items-center">
-                    <span className="mr-3">
-                      Are you sure you want to delete?
-                    </span>
-                    <DialogTrigger>
-                      <span
-                        className="text-md px-2 py-1 rounded bg-red-600 text-gray-200 cursor-pointer"
-                        onClick={() => {
-                          handleDelete(note._id);
-                        }}
-                      >
-                        Delete
-                      </span>
-                    </DialogTrigger>
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    {" "}
+                    Are you sure you want to delete?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    your note.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="cursor-pointer">
+                    Cancel
+                  </AlertDialogCancel>
+                  <span
+                    className="text-md rounded cursor-pointer"
+                    onClick={() => {
+                      handleDelete(note._id);
+                    }}
+                  >
+                    <AlertDialogAction className="bg-red-500 hover:bg-red-600 cursor-pointer">
+                      Delete
+                    </AlertDialogAction>
+                  </span>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
 
           <button
-            className={`ml-2 mb-0.5 cursor-pointer ${
-              note.isFavorite ? "bg-[#FFD700]" : "bg-gray-100"
-            } rounded-full p-0.5`}
+            // className={`ml-2 mb-0.5 cursor-pointer ${ note.isFavorite ? "bg-red-600" : "bg-gray-100" } rounded-full p-0.5`}
+            className={`ml-2 mb-0.5 cursor-pointer rounded-full p-0.5`}
             onClick={() => {
               handleFav(note._id);
             }}
           >
-            {note.isFavorite ? <HeartOff size={14} /> : <Heart size={15} />}
+            {note.isFavorite ? <HeartOff size={15} /> : <Heart size={15} />}
           </button>
         </div>
       </div>
       <div className="mt-2">
         <p className="inter text-sm text-gray-800">{note.content}</p>
         <p className="text-xs font-semibold mt-2 text-gray-800">
-          category: {note.category}
+          category: <span className="capitalize">{note.category}</span>
         </p>
         <p className="text-xs text-gray-700 font-semibold mt-1">
-          {note.updatedAt.slice(0, 10)}
+          {note.createdAt.slice(0, 10)}
         </p>
       </div>
     </div>

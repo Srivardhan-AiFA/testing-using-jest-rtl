@@ -38,7 +38,7 @@ describe("notes", () => {
   it("should return 400 with error content is required", async () => {
     const dummyNote = {};
     const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGMxMDQ4YjcwMWI1YTZlM2Q3MjdlZmIiLCJpYXQiOjE3NTc1OTM5NDgsImV4cCI6MTc1NzU5NzU0OH0.0-yrcflh1tIp0HP21hXTxBMItaBf2ZU3QS9EZoQ8940";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGMxNmJjMWI2MjlhNWM1NDNlYzhlY2IiLCJpYXQiOjE3NTc2NTczMzIsImV4cCI6MTc1NzY2MDkzMn0.C7sSAaUXlYWblfGghAkaJeKak9Jm-fLPBTBwukG9YU8";
 
     const res = await request(app)
       .post("/notes/create")
@@ -52,7 +52,7 @@ describe("notes", () => {
 
   it("should create a note successfully when valid data and token are provided", async () => {
     const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGMxMDQ4YjcwMWI1YTZlM2Q3MjdlZmIiLCJpYXQiOjE3NTc1OTM5NDgsImV4cCI6MTc1NzU5NzU0OH0.0-yrcflh1tIp0HP21hXTxBMItaBf2ZU3QS9EZoQ8940";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGMxNmJjMWI2MjlhNWM1NDNlYzhlY2IiLCJpYXQiOjE3NTc2NTczMzIsImV4cCI6MTc1NzY2MDkzMn0.C7sSAaUXlYWblfGghAkaJeKak9Jm-fLPBTBwukG9YU8";
 
     const res = await request(app)
       .post("/notes/create")
@@ -65,6 +65,34 @@ describe("notes", () => {
     expect(res.body.isFavorite).toBe(false);
     expect(res.body.category).toBe("all");
   });
+});
+
+it("should return 400 error for not providing the updated content", async () => {
+  const id = "68c3bb7e37f6cec415b756fd";
+  const token =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGMxNmJjMWI2MjlhNWM1NDNlYzhlY2IiLCJpYXQiOjE3NTc2NTczMzIsImV4cCI6MTc1NzY2MDkzMn0.C7sSAaUXlYWblfGghAkaJeKak9Jm-fLPBTBwukG9YU8";
+
+  const res = await request(app)
+    .put(`/notes/update/${id}`)
+    .set("Authorization", `Bearer ${token}`)
+    .send({ id });
+  expect(res.status).toBe(400);
+  expect(res.body).toHaveProperty("errors");
+  expect(res.body.errors[0].message).toBe("content is required");
+});
+
+it("should return error for not providing the updated content", async () => {
+  const id = "68c3bb7e37f6cec415b756fd";
+  const token =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGMxNmJjMWI2MjlhNWM1NDNlYzhlY2IiLCJpYXQiOjE3NTc2NTczMzIsImV4cCI6MTc1NzY2MDkzMn0.C7sSAaUXlYWblfGghAkaJeKak9Jm-fLPBTBwukG9YU8";
+
+  const res = await request(app)
+    .put(`/notes/update/${id}`)
+    .set("Authorization", `Bearer ${token}`)
+    .send({ content: "updated content" });
+  expect(res.status).toBe(200);
+  expect(res.body).toHaveProperty("updatedNote");
+  expect(res.body.message).toBe("note updated");
 });
 
 // npx jest --detectOpenHandles --watchAll --silent

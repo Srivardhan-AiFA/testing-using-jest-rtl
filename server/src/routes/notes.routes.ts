@@ -22,7 +22,7 @@ router.post(
   createNote
 );
 router.get("/getall", notesLimiter, protectedRoute, getAllNotes);
-router.get("/get/:id", notesLimiter, protectedRoute, getNote);
+router.get("/get/:id", notesLimiter, protectedRoute, getNote); // not using currently
 router.put(
   "/update/:id",
   notesLimiter,

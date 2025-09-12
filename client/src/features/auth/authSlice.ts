@@ -4,17 +4,20 @@ import axios from "axios";
 interface AuthState {
   user: {
     _id: string;
+    username: string;
     email: string;
     token: string;
   } | null;
   loading: boolean;
   error: string | null;
+  isLoggedin: boolean;
 }
 
 const initialState: AuthState = {
   user: null,
   loading: false,
   error: null,
+  isLoggedin: false,
 };
 
 export const signupAPI = createAsyncThunk<
@@ -28,8 +31,9 @@ export const signupAPI = createAsyncThunk<
       userData
     );
     return (res.data as { user: AuthState["user"] }).user;
-  } catch (err: any) {
-    return rejectWithValue(err.response?.data?.message || "Signup failed");
+  } catch (err) {
+    console.log(err);
+    return rejectWithValue("Signup failed");
   }
 });
 
@@ -43,8 +47,9 @@ export const signinAPI = createAsyncThunk<
       userData
     );
     return (res.data as { user: AuthState["user"] }).user;
-  } catch (err: any) {
-    return rejectWithValue(err.response?.data?.message || "Signup failed");
+  } catch (err) {
+    console.log(err);
+    return rejectWithValue("Signup failed");
   }
 });
 
@@ -55,6 +60,7 @@ export const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.error = null;
+      state.isLoggedin = false;
       localStorage.removeItem("token");
     },
     resetError: (state) => {
@@ -93,6 +99,7 @@ export const authSlice = createSlice({
         if (action.payload?.token) {
           localStorage.setItem("token", action.payload.token);
         }
+        state.isLoggedin = true;
       })
       .addCase(signinAPI.rejected, (state, action) => {
         state.loading = false;

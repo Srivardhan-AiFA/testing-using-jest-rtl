@@ -5,6 +5,16 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/app/store";
 import type { SingleNote } from "@/types/user.type";
 import Note from "@/components/note";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+
 export default function Dashboard() {
   const [note, setNote] = useState<SingleNote>({
     _id: "",
@@ -23,6 +33,10 @@ export default function Dashboard() {
   const [filteredNotes, setFilteredNotes] = useState<SingleNote[]>(notes);
 
   const [showFavoritesButton, setShowFavoritesButton] = useState<boolean>(true);
+
+  const [activeCategory, setActiveCategory] = useState<string>("all");
+
+  const [isAddingNewCategory, setIsAddingNewCategory] = useState(false);
 
   const [text, setText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -54,12 +68,15 @@ export default function Dashboard() {
 
   const handleSubmit = () => {
     if (!note.content) return;
+    if (!note.category) note.category = "all";
     dispatch(addNote(note));
-    setNote({ ...note, title: "", content: "" });
+    setNote({ ...note, title: "", content: "", category: "" });
     setText("");
+    setIsAddingNewCategory(false);
   };
 
   const handleFilter = (category: string) => {
+    setActiveCategory(category);
     setShowFavoritesButton(true);
     if (category === "favorite") {
       setShowFavoritesButton(false);
@@ -91,6 +108,7 @@ export default function Dashboard() {
             value={note.title}
             onChange={(e) => setNote({ ...note, title: e.target.value })}
           />
+
           <textarea
             ref={textareaRef}
             value={text}
@@ -99,6 +117,49 @@ export default function Dashboard() {
             rows={1}
             placeholder="Take a note..."
           />
+
+          {/* Category Dropdown */}
+          <div className="mt-2">
+            <Select
+              value={isAddingNewCategory ? "__new__" : note.category}
+              onValueChange={(value) => {
+                if (value === "__new__") {
+                  setIsAddingNewCategory(true);
+                  setNote({ ...note, category: "" });
+                } else {
+                  setIsAddingNewCategory(false);
+                  setNote({ ...note, category: value });
+                }
+              }}
+            >
+              <SelectTrigger className="w-11/12 text-xs outline-0">
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((category, index) => (
+                  <SelectItem
+                    key={index}
+                    value={category}
+                    className="capitalize cursor-pointer"
+                  >
+                    {category}
+                  </SelectItem>
+                ))}
+                <SelectItem value="__new__">+ Add new category</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {isAddingNewCategory && (
+              <Input
+                type="text"
+                placeholder="New Category"
+                className="w-11/12 mt-2 text-xs outline-0 focus:outline-0"
+                value={note.category}
+                onChange={(e) => setNote({ ...note, category: e.target.value })}
+              />
+            )}
+          </div>
+
           <Button
             type="submit"
             className="px-4 bg-[#77a4eb] hover:bg-blue-400 text-gray-900 outfit text-xs cursor-pointer rounded mt-2"
@@ -115,10 +176,11 @@ export default function Dashboard() {
             return (
               <div key={index}>
                 <p
-                  onClick={() => {
-                    handleFilter(category);
-                  }}
-                  className="px-3 py-1 cursor-pointer rounded-2xl border-1 min-w-16 text-center text-xs font-semibold mt-1 uppercase"
+                  onClick={() => handleFilter(category)}
+                  className={`px-3 py-1 cursor-pointer rounded-2xl border min-w-16 text-center text-xs font-semibold mt-1 uppercase
+                    ${
+                      activeCategory === category ? "bg-gray-200" : "bg-white"
+                    }`}
                 >
                   {category}
                 </p>
@@ -130,7 +192,9 @@ export default function Dashboard() {
             onClick={() => {
               handleFilter("favorite");
             }}
-            className="px-3 py-1 cursor-pointer rounded-2xl border-1 min-w-16 text-center text-xs font-semibold mt-1 uppercase bg-[#f36457]"
+            className={`px-3 py-1 cursor-pointer rounded-2xl min-w-16 text-center text-xs font-semibold mt-1 uppercase border-1 border-red-400 ${
+              activeCategory === "favorite" ? "bg-red-500" : "bg-[#f36457]"
+            }`}
           >
             Favorites
           </p>

@@ -27,10 +27,9 @@ export const addFavorite = createAsyncThunk<
       config
     );
     return { message: res.data, id } as { message: string; id: string };
-  } catch (err: any) {
-    return rejectWithValue(
-      err.response?.data?.message || "Getting Notes Failed"
-    );
+  } catch (error) {
+    console.log(error);
+    return rejectWithValue("Getting Notes Failed");
   }
 });
 
@@ -58,10 +57,9 @@ export const addCategory = createAsyncThunk<
       id: string;
       category: string;
     };
-  } catch (err: any) {
-    return rejectWithValue(
-      err.response?.data?.message || "Getting Notes Failed"
-    );
+  } catch (error) {
+    console.log(error);
+    return rejectWithValue("Getting Notes Failed");
   }
 });
 
@@ -69,7 +67,7 @@ export const getNotes = createAsyncThunk<
   SingleNote[],
   void,
   { rejectValue: string }
->("notes/getNotes", async (_, thunkAPI) => {
+>("notes/getNotes", async (_, { rejectWithValue }) => {
   try {
     const token = localStorage.getItem("token");
     const config = {
@@ -82,10 +80,9 @@ export const getNotes = createAsyncThunk<
       config
     );
     return res.data as SingleNote[];
-  } catch (err: any) {
-    return thunkAPI.rejectWithValue(
-      err.response?.data?.message || "Getting Notes Failed"
-    );
+  } catch (error) {
+    console.log(error);
+    return rejectWithValue("Getting Notes Failed");
   }
 });
 export const editNote = createAsyncThunk<
@@ -106,10 +103,9 @@ export const editNote = createAsyncThunk<
       config
     );
     return res.data as { message: string; updatedNote: SingleNote };
-  } catch (err: any) {
-    return rejectWithValue(
-      err.response?.data?.message || "Getting Notes Failed"
-    );
+  } catch (error) {
+    console.log(error);
+    return rejectWithValue("Getting Notes Failed");
   }
 });
 
@@ -130,10 +126,9 @@ export const deleteNote = createAsyncThunk<
       config
     );
     return res.data as { message: string; deletedNote: SingleNote };
-  } catch (err: any) {
-    return rejectWithValue(
-      err.response?.data?.message || "Getting Notes Failed"
-    );
+  } catch (error) {
+    console.log(error);
+    return rejectWithValue("Getting Notes Failed");
   }
 });
 
@@ -153,10 +148,9 @@ export const addNote = createAsyncThunk(
         config
       );
       return res.data;
-    } catch (err: any) {
-      return rejectWithValue(
-        err.response?.data?.message || "Adding Note Failed"
-      );
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue("Getting Notes Failed");
     }
   }
 );
