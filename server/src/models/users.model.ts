@@ -5,11 +5,11 @@ const userSchema = new mongoose.Schema<UserType>(
   {
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    refreshToken: { type: String, require: true },
   },
   {
     timestamps: true,
   }
 );
 
-export const User = mongoose.model<UserType>("User", userSchema);
+export const User = mongoose.model<UserType>("Users", userSchema);

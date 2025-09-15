@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { addEvent } from "../controllers/calendar.controllers";
+import { createEvent } from "../controllers/calendar.controllers";
+import { protectedRoute } from "../middlewares/auth.middleware";
 
 const router = Router();
-router.post("/send", addEvent);
+router.post("/create", protectedRoute, createEvent);
 
 export default router;

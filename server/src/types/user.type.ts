@@ -4,11 +4,11 @@ import { JwtPayload } from "jsonwebtoken";
 export type UserType = {
   username: string;
   email: string;
-  password: string;
+  refreshToken: string;
 };
 
 export interface AuthRequest extends Request {
-  userId?: string | JwtPayload;
+  email?: string | JwtPayload;
 }
 
-export type userId = string | JwtPayload | undefined;
+export type email = string | JwtPayload | undefined;

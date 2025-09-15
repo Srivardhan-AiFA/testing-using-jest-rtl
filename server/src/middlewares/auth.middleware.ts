@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { compareToken } from "../utils/jwt.utils";
 import { JwtPayload } from "jsonwebtoken";
 import { AuthRequest } from "../types/user.type";
+import passport from "passport";
 
 export const protectedRoute = (
   req: AuthRequest,
@@ -22,9 +23,12 @@ export const protectedRoute = (
       res.status(401).json({ message: "Invalid token" });
       return;
     }
+    console.log(decoded);
 
-    if (typeof decoded === "object" && "userId" in decoded) {
-      req.userId = (decoded as JwtPayload & { userId: string }).userId;
+    if (typeof decoded === "object" && "email" in decoded) {
+      console.log("control start");
+      req.email = (decoded as JwtPayload & { email: string }).email;
+      console.log("control end");
       next();
     } else {
       res.status(401).json({ message: "Invalid token payload" });
@@ -33,3 +37,15 @@ export const protectedRoute = (
     res.status(401).json({ message: "Invalid token" });
   }
 };
+
+export const signin = passport.authenticate("google", {
+  scope: [
+    "profile",
+    "email",
+    "https://www.googleapis.com/auth/calendar.events",
+  ],
+  accessType: "offline",
+  prompt: "consent",
+});
+
+export const redirect = passport.authenticate("google");
