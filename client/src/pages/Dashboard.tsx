@@ -25,20 +25,19 @@ export default function Dashboard() {
   if (token) localStorage.setItem("token", token);
 
   const [message, setMessage] = useState<string>("");
+  const [file, setFile] = useState<File | null>(null);
 
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  console.log(timeZone);
 
   const [mailData, setMailData] = useState<Mail>({
     summary: "",
     description: "",
     startTime: "",
     endTime: "",
-    timeZone: timeZone,
+    timeZone,
     attendees: [{ email: "" }],
   });
 
-  // Add a new recipient input
   const addRecipient = () => {
     setMailData({
       ...mailData,
@@ -46,7 +45,6 @@ export default function Dashboard() {
     });
   };
 
-  // Update a specific attendee's email
   const updateRecipient = (index: number, email: string) => {
     const updatedAttendees = [...mailData.attendees];
     updatedAttendees[index].email = email;
@@ -56,32 +54,43 @@ export default function Dashboard() {
   const handleSubmit = async () => {
     setMessage("loading...");
 
-    const eventPayload = {
-      summary: mailData.summary,
-      description: mailData.description,
-      start: {
-        dateTime: new Date(mailData.startTime).toISOString(),
-        timeZone: mailData.timeZone,
-      },
-      end: {
-        dateTime: new Date(mailData.endTime).toISOString(),
-        timeZone: mailData.timeZone,
-      },
-      attendees: mailData.attendees.filter((a) => a.email.trim() !== ""),
-    };
-
     try {
       const token = localStorage.getItem("token");
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      if (!token) {
+        setMessage("Unauthorized");
+        return;
+      }
+      const eventPayload = {
+        summary: mailData.summary,
+        description: mailData.description,
+        start: {
+          dateTime: new Date(mailData.startTime).toISOString(),
+          timeZone: mailData.timeZone,
         },
+        end: {
+          dateTime: new Date(mailData.endTime).toISOString(),
+          timeZone: mailData.timeZone,
+        },
+        attendees: mailData.attendees.filter((a) => a.email.trim() !== ""),
       };
+
+      const formData = new FormData();
+      formData.append("eventData", JSON.stringify(eventPayload));
+      if (file) {
+        formData.append("file", file);
+      }
+
       const response = await axios.post<{ message: string }>(
         `${import.meta.env.VITE_BACKEND_URL}/calendar/create`,
-        eventPayload,
-        config
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
+
       setMessage(response.data.message);
     } catch (error) {
       console.error(error);
@@ -178,6 +187,23 @@ export default function Dashboard() {
               }
             />
           </div>
+        </div>
+
+        {/* File upload */}
+        <div>
+          <div className="flex gap-1">
+            <Label className="mb-2">File</Label>
+            <span className="text-xs text-gray-500">(.pdf)</span>
+          </div>
+          <Input
+            type="file"
+            className="cursor-pointer"
+            accept=".pdf"
+            onChange={(e) => {
+              const selectedFile = e.target.files?.[0] || null;
+              setFile(selectedFile);
+            }}
+          />
         </div>
 
         <Button type="submit" className="mt-4 cursor-pointer">

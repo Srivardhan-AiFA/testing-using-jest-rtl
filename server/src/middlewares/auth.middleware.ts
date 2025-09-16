@@ -23,12 +23,9 @@ export const protectedRoute = (
       res.status(401).json({ message: "Invalid token" });
       return;
     }
-    console.log(decoded);
 
     if (typeof decoded === "object" && "email" in decoded) {
-      console.log("control start");
       req.email = (decoded as JwtPayload & { email: string }).email;
-      console.log("control end");
       next();
     } else {
       res.status(401).json({ message: "Invalid token payload" });
@@ -43,9 +40,8 @@ export const signin = passport.authenticate("google", {
     "profile",
     "email",
     "https://www.googleapis.com/auth/calendar.events",
+    "https://www.googleapis.com/auth/drive.file",
   ],
   accessType: "offline",
   prompt: "consent",
 });
-
-export const redirect = passport.authenticate("google");

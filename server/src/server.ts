@@ -13,6 +13,7 @@ import calendarEventsRoutes from "./routes/calendar.routes";
 // rate limiters
 import { globalLimiter } from "./middlewares/rateLimit";
 import passport from "./utils/passport";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 connectDB();
@@ -20,6 +21,7 @@ connectDB();
 export const app = express();
 
 app.use(globalLimiter);
+app.use(cookieParser());
 app.use(cors());
 app.use(express.json());
 

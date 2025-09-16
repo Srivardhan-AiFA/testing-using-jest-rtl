@@ -15,11 +15,8 @@ passport.use(
       passReqToCallback: true,
     },
     async (_, accessToken, refreshToken, profile, done) => {
-      // console.log("Access Token:", accessToken);
       // console.log("Refresh Token:", refreshToken);
       // console.log("Profile:", profile);
-
-      // TODO: Save tokens & user info to DB
       try {
         if (profile) {
           let user = await User.findOne({ email: profile.emails![0].value });
