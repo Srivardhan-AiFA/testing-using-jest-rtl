@@ -1,5 +1,5 @@
+import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
@@ -12,12 +12,14 @@ export default function Home() {
           </h2>
         </div>
         <div>
-          <Link
-            to="signin"
+          <Button
+            onClick={() => {
+              window.location.href = "http://localhost:3000/auth/google";
+            }}
             className="flex items-center rounded-sm px-5 py-2 text-gray-100 font-semibold text-xs bg-[#ea4335] cursor-pointer hover:bg-[#f05b4d]"
           >
             Signin <ArrowRight size={15} className="ml-2" />
-          </Link>
+          </Button>
         </div>
       </header>
       <main>

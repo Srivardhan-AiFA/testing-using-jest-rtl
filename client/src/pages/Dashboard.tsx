@@ -1,23 +1,14 @@
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Trash } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
-
-type Attendee = {
-  email: string;
-};
-
-type Mail = {
-  summary: string;
-  description: string;
-  startTime: string;
-  endTime: string;
-  timeZone: string;
-  attendees: Attendee[];
-};
+import { useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { eventSchema, type EventForm } from "@/zod/form.zod";
 
 export default function Dashboard() {
   const [searchParams] = useSearchParams();
@@ -29,56 +20,54 @@ export default function Dashboard() {
 
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  const [mailData, setMailData] = useState<Mail>({
-    summary: "",
-    description: "",
-    startTime: "",
-    endTime: "",
-    timeZone,
-    attendees: [{ email: "" }],
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<EventForm>({
+    resolver: zodResolver(eventSchema),
+    defaultValues: {
+      summary: "",
+      description: "",
+      startTime: "",
+      endTime: "",
+      attendees: [{ email: "" }],
+    },
   });
 
-  const addRecipient = () => {
-    setMailData({
-      ...mailData,
-      attendees: [...mailData.attendees, { email: "" }],
-    });
-  };
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "attendees",
+  });
 
-  const updateRecipient = (index: number, email: string) => {
-    const updatedAttendees = [...mailData.attendees];
-    updatedAttendees[index].email = email;
-    setMailData({ ...mailData, attendees: updatedAttendees });
-  };
-
-  const handleSubmit = async () => {
+  const onSubmit = async (data: EventForm) => {
     setMessage("loading...");
-
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         setMessage("Unauthorized");
         return;
       }
+
       const eventPayload = {
-        summary: mailData.summary,
-        description: mailData.description,
+        summary: data.summary,
+        description: data.description,
         start: {
-          dateTime: new Date(mailData.startTime).toISOString(),
-          timeZone: mailData.timeZone,
+          dateTime: new Date(data.startTime).toISOString(),
+          timeZone,
         },
         end: {
-          dateTime: new Date(mailData.endTime).toISOString(),
-          timeZone: mailData.timeZone,
+          dateTime: new Date(data.endTime).toISOString(),
+          timeZone,
         },
-        attendees: mailData.attendees.filter((a) => a.email.trim() !== ""),
+        attendees: data.attendees.filter((a) => a.email.trim() !== ""),
       };
 
       const formData = new FormData();
       formData.append("eventData", JSON.stringify(eventPayload));
-      if (file) {
-        formData.append("file", file);
-      }
+      if (file) formData.append("file", file);
 
       const response = await axios.post<{ message: string }>(
         `${import.meta.env.VITE_BACKEND_URL}/calendar/create`,
@@ -92,72 +81,95 @@ export default function Dashboard() {
       );
 
       setMessage(response.data.message);
+      reset();
+      setFile(null);
     } catch (error) {
       console.error(error);
       setMessage("Something went wrong");
     }
   };
 
-  if (!token) {
-    return <h1>Unauthorized</h1>;
-  }
+  if (!token) return <h1>Unauthorized</h1>;
 
   return (
-    <div className="max-w-lg mx-auto mt-10">
-      {message && <p className="text-center mt-2 font-semibold">{message}</p>}
+    <div className="max-w-2xl mx-auto mt-20">
+      <h2 className="text-2xl font-semibold outfit ml-1 mb-2">Add Event</h2>
+
+      {message && (
+        <p className="text-center mt-2 font-semibold mb-4">{message}</p>
+      )}
 
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
-        className="flex flex-col gap-4"
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-4 border-2 p-4 rounded-md inter"
       >
         {/* Title */}
         <div>
-          <Label className="mb-2">Title</Label>
-          <Input
-            placeholder="Team Sync Meeting"
-            required
-            value={mailData.summary}
-            onChange={(e) =>
-              setMailData({ ...mailData, summary: e.target.value })
-            }
-          />
+          <Label className="mb-2 after:content-['*'] after:text-red-500">
+            Title
+          </Label>
+          <Input placeholder="Team Sync Meeting" {...register("summary")} />
+          {errors.summary && (
+            <p className="text-red-500 text-xs mt-1 ml-1">
+              {errors.summary.message}
+            </p>
+          )}
         </div>
 
         {/* Description */}
         <div>
-          <Label className="mb-2">Description</Label>
+          <Label className="mb-2 after:content-['*'] after:text-red-500">
+            Description
+          </Label>
           <Textarea
             placeholder="Weekly sync-up with the product team..."
-            required
             rows={5}
-            value={mailData.description}
-            onChange={(e) =>
-              setMailData({ ...mailData, description: e.target.value })
-            }
+            {...register("description")}
           />
+          {errors.description && (
+            <p className="text-red-500 text-xs mt-1 ml-1">
+              {errors.description.message}
+            </p>
+          )}
         </div>
 
         {/* Recipients */}
         <div>
-          <Label className="mb-2">Recipients</Label>
-          {mailData.attendees.map((attendee, idx) => (
-            <Input
-              key={idx}
-              placeholder="email@example.com"
-              required
-              value={attendee.email}
-              onChange={(e) => updateRecipient(idx, e.target.value)}
-              className="mb-2"
-            />
+          <Label className="mb-2 after:content-['*'] after:text-red-500">
+            Recipients
+          </Label>
+          {fields.map((field, index) => (
+            <div key={field.id} className="flex items-center gap-2 mb-2">
+              <div className="flex-1">
+                <Input
+                  placeholder="email@example.com"
+                  {...register(`attendees.${index}.email`)}
+                />
+                {errors.attendees?.[index]?.email && (
+                  <p className="text-red-500 text-xs mt-1 ml-1">
+                    {errors.attendees[index]?.email?.message}
+                  </p>
+                )}
+              </div>
+
+              {fields.length > 1 && (
+                <span onClick={() => remove(index)}>
+                  <Trash size={15} className="text-red-600 cursor-pointer" />
+                </span>
+              )}
+            </div>
           ))}
+
+          {errors.attendees && (
+            <p className="text-red-500 text-xs mt-1 ml-1">
+              {errors.attendees?.message as string}
+            </p>
+          )}
           <Button
             type="button"
             variant="outline"
             className="cursor-pointer"
-            onClick={addRecipient}
+            onClick={() => append({ email: "" })}
           >
             + Add another recipient
           </Button>
@@ -166,26 +178,26 @@ export default function Dashboard() {
         {/* Time */}
         <div className="flex gap-2">
           <div className="flex-1">
-            <Label className="mb-2">From</Label>
-            <Input
-              type="datetime-local"
-              required
-              value={mailData.startTime}
-              onChange={(e) =>
-                setMailData({ ...mailData, startTime: e.target.value })
-              }
-            />
+            <Label className="mb-2 after:content-['*'] after:text-red-500">
+              From
+            </Label>
+            <Input type="datetime-local" {...register("startTime")} />
+            {errors.startTime && (
+              <p className="text-red-500 text-xs mt-1 ml-1">
+                {errors.startTime.message}
+              </p>
+            )}
           </div>
           <div className="flex-1">
-            <Label className="mb-2">To</Label>
-            <Input
-              type="datetime-local"
-              required
-              value={mailData.endTime}
-              onChange={(e) =>
-                setMailData({ ...mailData, endTime: e.target.value })
-              }
-            />
+            <Label className="mb-2 after:content-['*'] after:text-red-500">
+              To
+            </Label>
+            <Input type="datetime-local" {...register("endTime")} />
+            {errors.endTime && (
+              <p className="text-red-500 text-xs mt-1 ml-1">
+                {errors.endTime.message}
+              </p>
+            )}
           </div>
         </div>
 
@@ -193,18 +205,26 @@ export default function Dashboard() {
         <div>
           <div className="flex gap-1">
             <Label className="mb-2">File</Label>
-            <span className="text-xs text-gray-500">(.pdf)</span>
+            <span className="text-xs text-gray-500">(optional)</span>
           </div>
           <Input
             type="file"
             className="cursor-pointer"
             accept=".pdf"
-            onChange={(e) => {
-              const selectedFile = e.target.files?.[0] || null;
-              setFile(selectedFile);
-            }}
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
           />
         </div>
+        {file && (
+          <>
+            <p className="text-sm font-medium">PDF Preview:</p>
+            <iframe
+              src={URL.createObjectURL(file)}
+              width="100%"
+              height="400px"
+              className="border rounded-md"
+            />
+          </>
+        )}
 
         <Button type="submit" className="mt-4 cursor-pointer">
           Create Event
