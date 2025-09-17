@@ -24,5 +24,3 @@ export const eventSchema = z
     message: "End time must be after start time",
     path: ["endTime"],
   });
-
-export type EventForm = z.infer<typeof eventSchema>;
