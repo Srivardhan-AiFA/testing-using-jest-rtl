@@ -22,7 +22,7 @@ const initialState: AuthState = {
 
 export const signupAPI = createAsyncThunk<
   AuthState["user"],
-  { username: string; email: string; password: string },
+  { firstname: string; lastname: string; email: string; password: string },
   { rejectValue: string }
 >("auth/signupAPI", async (userData, { rejectWithValue }) => {
   try {

@@ -38,7 +38,8 @@ export function SigninForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <form
         onSubmit={(e) => {
-          e.preventDefault(), handleSubmit();
+          e.preventDefault();
+          handleSubmit();
         }}
       >
         <div className="flex flex-col gap-6">
@@ -62,7 +63,7 @@ export function SigninForm({
               <Input
                 id="email"
                 type="email"
-                placeholder="m@example.com"
+                placeholder="chandlerbing@transposter.com"
                 required
                 onChange={(e) => {
                   setUser({ ...user, email: e.target.value });

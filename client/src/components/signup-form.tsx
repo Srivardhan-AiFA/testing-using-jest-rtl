@@ -15,7 +15,8 @@ export function SignupForm({
 }: React.ComponentProps<"div">) {
   const [eye, setEye] = useState(false);
   const [user, setUser] = useState({
-    username: "",
+    firstname: "",
+    lastname: "",
     email: "",
     password: "",
   });
@@ -52,23 +53,36 @@ export function SignupForm({
               <div className="flex size-8 items-center justify-center rounded-md">
                 <GalleryVerticalEnd className="size-6" />
               </div>
-              <span className="sr-only">Notely</span>
+              <span className="sr-only">Somwhere</span>
             </a>
             <h1 className="text-xl font-bold">
-              Welcome to <span className="underline">Notely</span>.
+              Welcome to <span className="underline">Somwhere</span>.
             </h1>
           </div>
 
-          {/* Username */}
+          {/* firstname */}
           <div className="grid gap-3">
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="firstname">Firstname</Label>
             <Input
-              id="username"
+              id="firstname"
               type="text"
-              placeholder="Mark"
+              placeholder="Chandler"
               required
-              value={user.username}
-              onChange={(e) => setUser({ ...user, username: e.target.value })}
+              value={user.firstname}
+              onChange={(e) => setUser({ ...user, firstname: e.target.value })}
+            />
+          </div>
+
+          {/* lastname */}
+          <div className="grid gap-3">
+            <Label htmlFor="lastname">Lastname</Label>
+            <Input
+              id="lastname"
+              type="text"
+              placeholder="Bing"
+              required
+              value={user.lastname}
+              onChange={(e) => setUser({ ...user, lastname: e.target.value })}
             />
           </div>
 
@@ -78,7 +92,7 @@ export function SignupForm({
             <Input
               id="email"
               type="email"
-              placeholder="mark@notely.com"
+              placeholder="chandlerbing@transposter.com"
               required
               value={user.email}
               onChange={(e) => setUser({ ...user, email: e.target.value })}

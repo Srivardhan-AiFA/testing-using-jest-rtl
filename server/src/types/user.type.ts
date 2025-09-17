@@ -2,7 +2,8 @@ import { Request } from "express";
 import { JwtPayload } from "jsonwebtoken";
 
 export type UserType = {
-  username: string;
+  firstname: string;
+  lastname: string;
   email: string;
   password: string;
 };
