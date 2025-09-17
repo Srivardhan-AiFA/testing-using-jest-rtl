@@ -56,6 +56,8 @@ export const signin = async (req: Request, res: Response) => {
     return res.status(200).json({
       user: {
         _id: user._id,
+        firstname: user.firstname,
+        lastname: user.lastname,
         email: user.email,
         token,
       },

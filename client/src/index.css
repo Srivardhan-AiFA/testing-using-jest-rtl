@@ -5,14 +5,17 @@
 @import "tw-animate-css";
 
 
+
+*{
+  font-family: "Inter";
+}
+
 .inter {
   font-family: "Inter", sans-serif;
 }
-
 .outfit{
   font-family: "Outfit", sans-serif;
 }
-
 
 @custom-variant dark (&:is(.dark *));
 

@@ -4,7 +4,8 @@ import axios from "axios";
 interface AuthState {
   user: {
     _id: string;
-    username: string;
+    firstname: string;
+    lastname: string;
     email: string;
     token: string;
   } | null;
