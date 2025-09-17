@@ -23,7 +23,7 @@ export function DropdownMenuCheckboxes() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex cursor-pointer items-center bg-gray-900 px-2 rounded-sm">
+        <div className="flex cursor-pointer items-center bg-blue-800 text-gray-100 px-2 rounded-sm">
           <Menu size={15} />
           <span className="text-xs py-2 px-2 rounded-sm">Apps</span>
           <ChevronDown size={15} />

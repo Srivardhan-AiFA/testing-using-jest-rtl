@@ -6,9 +6,9 @@ import {
   Folder,
   ListTodoIcon,
   Mail,
-  Scale,
   SquareTerminal,
   Text,
+  TrendingUp,
   User,
 } from "lucide-react";
 
@@ -110,7 +110,7 @@ const data = {
     {
       title: "Metrics",
       url: "#",
-      icon: Scale,
+      icon: TrendingUp,
       items: [
         {
           title: "General",
@@ -165,7 +165,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <ThemeProvider>
+      <ThemeProvider defaultTheme="light">
         <SidebarFooter>
           <NavUser user={data.user} />
         </SidebarFooter>
