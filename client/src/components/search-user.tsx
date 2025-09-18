@@ -13,11 +13,7 @@ import { Input } from "./ui/input";
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
 import { addTransaction } from "@/features/accounts/accountsSlice";
-
-type SelectedUser = {
-  username: string;
-  amount: number;
-};
+import type { SelectedUser } from "@/types/user.type";
 
 export default function SearchUser() {
   const users = useSelector((state: RootState) => state.services.users);
@@ -45,7 +41,7 @@ export default function SearchUser() {
                   setSelectedUser({ ...selectedUser, username: user })
                 }
               >
-                {user}
+                {`${user[0].toUpperCase() + user.slice(1)}`}
               </CommandItem>
             ))}
           </CommandGroup>
@@ -72,7 +68,12 @@ export default function SearchUser() {
         <div className="mt-4 p-2">
           <Separator />
           <h3 className="text-xs mt-2 text-gray-400">Selected User</h3>
-          <p className="text-gray-700 text-sm">{selectedUser.username}</p>
+          <p className="text-gray-700 text-sm">
+            {`${
+              selectedUser.username[0].toUpperCase() +
+              selectedUser.username.slice(1)
+            }`}
+          </p>
           <h3 className="text-xs mt-2 text-gray-400">Amount</h3>
           <p className="text-gray-700 text-sm">{selectedUser.amount}</p>
         </div>

@@ -6,7 +6,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import type { ChartData } from "./card-chart";
+import type { ChartAreaDefaultPropsAreaOf } from "@/types/chart.types";
 
 export const description = "A simple area chart";
 
@@ -16,11 +16,8 @@ const chartConfig = {
     color: "var(--chart-1)",
   },
 } satisfies ChartConfig;
-type ChartAreaDefaultProps = {
-  chartData: ChartData[];
-};
 
-export function ChartAreaDefault({ chartData }: ChartAreaDefaultProps) {
+export function ChartAreaDefault({ chartData }: ChartAreaDefaultPropsAreaOf) {
   return (
     <div className="w-full">
       <ChartContainer config={chartConfig}>

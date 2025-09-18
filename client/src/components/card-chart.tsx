@@ -1,32 +1,28 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Card, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { ChartAreaDefault } from "./chart-area-default";
+import type { ChartAreaDefaultProps } from "@/types/chart.types";
 
-export type ChartData = {
-  month: string;
-  desktop: number;
-};
-
-type ChartAreaDefaultProps = {
-  chartData: ChartData[];
-  money: number;
-  trend: string;
-  trendRate: number;
-};
 export default function CardChart({
   chartData,
   money,
   trend,
   trendRate,
+  displayName,
 }: ChartAreaDefaultProps) {
   return (
     <div>
       <Card className="@container/card py-0">
         <CardHeader>
           <div className="flex items-center mt-5">
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-2xl">
-              ${money}
-            </CardTitle>
+            <div>
+              <p className="text-xs mb-1 font-medium text-gray-600">
+                {displayName}
+              </p>
+              <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-2xl">
+                ${money}
+              </CardTitle>
+            </div>
             <div>
               {trend == "up" ? (
                 <div className="ml-2 font-semibold flex text-xs text-green-600">

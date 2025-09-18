@@ -63,9 +63,9 @@ export function SignupForm({
           <div className="grid gap-3">
             <Label htmlFor="lastname">Username</Label>
             <Input
-              id="usename"
+              id="username"
               type="text"
-              placeholder="Bing"
+              placeholder="Mark Johnson"
               required
               value={user.username}
               onChange={(e) => setUser({ ...user, username: e.target.value })}

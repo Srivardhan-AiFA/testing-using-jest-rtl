@@ -1,6 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import type { Transaction, TransactionState } from "../../types/user.type";
+import type {
+  LastTransactionsResponse,
+  Transaction,
+  TransactionState,
+} from "../../types/user.type";
 
 const initialState: TransactionState = {
   loading: false,
@@ -79,11 +83,6 @@ export const addTransaction = createAsyncThunk<
     }
   }
 );
-
-type LastTransactionsResponse = {
-  accountId: string;
-  lastTransactions: Transaction[];
-};
 
 export const getLastTransactions = createAsyncThunk<
   { transactions: Transaction[] },

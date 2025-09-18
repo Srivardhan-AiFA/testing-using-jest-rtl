@@ -1,29 +1,29 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import storage from "redux-persist/lib/storage"; // defaults to localStorage
+import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
 
 import authReducer from "../features/auth/authSlice";
 import accountReducer from "@/features/accounts/accountsSlice";
 import serviceReducer from "@/features/sevices/serviceSlice";
 
-// 1️⃣ Persist config
+// Persist config
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["user", "notes", "services"], // slices you want to persist
+  whitelist: ["user", "accounts", "services"],
 };
 
-// 2️⃣ Combine reducers
+// Combine reducers
 const rootReducer = combineReducers({
   user: authReducer,
   accounts: accountReducer,
   services: serviceReducer,
 });
 
-// 3️⃣ Wrap with persistReducer
+// Wrap with persistReducer
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-// 4️⃣ Create store
+// Create store
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
@@ -32,9 +32,9 @@ export const store = configureStore({
     }),
 });
 
-// 5️⃣ Persistor
+// Persistor
 export const persistor = persistStore(store);
 
-// 6️⃣ Types
+// Types
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

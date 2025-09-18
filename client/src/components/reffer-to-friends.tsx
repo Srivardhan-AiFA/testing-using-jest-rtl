@@ -5,13 +5,11 @@ export default function RefferToFriends() {
   return (
     <div>
       <div className="flex justify-center">
-        <CreditCard size={60} className="text-gray-200 mb-3" />
+        <CreditCard size={60} className=" mb-3" />
       </div>
       <div className="flex items-center flex-col">
-        <h6 className="mb-5 text-lg font-semibold text-gray-200">
-          Refer and Get Reward
-        </h6>
-        <p className="mb-5 text-center text-xs max-w-3/5 font-semibold text-gray-200">
+        <h6 className="mb-5 text-lg font-semibold">Refer and Get Reward</h6>
+        <p className="mb-5 text-center text-xs max-w-3/5 font-semibold">
           Refer us to your friends and earn bonus when they join.
         </p>
         <Button

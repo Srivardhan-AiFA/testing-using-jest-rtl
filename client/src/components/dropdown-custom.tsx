@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { type DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 
 import {
   DropdownMenu,
@@ -12,8 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown, Menu } from "lucide-react";
-
-type Checked = DropdownMenuCheckboxItemProps["checked"];
+import type { Checked } from "@/types/chart.types";
 
 export function DropdownMenuCheckboxes() {
   const [showStatusBar, setShowStatusBar] = React.useState<Checked>(true);

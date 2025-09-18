@@ -8,14 +8,6 @@ export const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-export const notesLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, //15 minutes
-  max: 100, // 100 attemps
-  message: { message: "Too many requests, slow down!" },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
 export const globalLimiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minute
   max: 200,

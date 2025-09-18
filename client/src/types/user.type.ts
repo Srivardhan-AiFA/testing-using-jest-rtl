@@ -50,3 +50,13 @@ export interface AllUsersState {
   error: string | null;
   users: string[];
 }
+
+export type SelectedUser = {
+  username: string;
+  amount: number;
+};
+
+export type LastTransactionsResponse = {
+  accountId: string;
+  lastTransactions: Transaction[];
+};

@@ -77,24 +77,28 @@ export default function Dashboard() {
               money={204}
               trend="up"
               trendRate={23}
+              displayName="SOL"
             />
             <CardChart
               chartData={chartData2}
               money={1264}
               trend="up"
               trendRate={12}
+              displayName="ETH"
             />
             <CardChart
               chartData={chartData3}
-              money={8495}
+              money={88495}
               trend="down"
               trendRate={3}
+              displayName="BTC"
             />
             <CardChart
               chartData={chartData4}
-              money={729}
+              money={1.01}
               trend="up"
               trendRate={9}
+              displayName="USDT"
             />
           </div>
           <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-2 mt-5 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
@@ -105,7 +109,7 @@ export default function Dashboard() {
             <div className="col-span-5 border-2 p-3 rounded-sm">
               <AccountsInformation />
             </div>
-            <div className="col-span-3 bg-[#242424] rounded-sm flex flex-col items-center justify-center">
+            <div className="col-span-3 rounded-sm border-2 flex flex-col items-center justify-center">
               <RefferToFriends />
             </div>
             <div className="col-span-4 border-2 rounded-sm">

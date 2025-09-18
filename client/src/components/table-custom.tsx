@@ -20,7 +20,7 @@ export default function TableCustom() {
         <TableHeader>
           <TableRow>
             <TableHead>Account Holder</TableHead>
-            <TableHead className="text-center">Last Transfer</TableHead>
+            <TableHead>Last Transfer</TableHead>
             <TableHead className="text-right">Amount</TableHead>
           </TableRow>
         </TableHeader>
@@ -48,14 +48,22 @@ export default function TableCustom() {
           )}
           {transactions.map((tx, index) => (
             <TableRow key={index} className="border-b-0">
-              <TableCell>{tx.friendName}</TableCell>
-              <TableCell className="text-center">
-                {new Date(tx.transactionDate).toLocaleDateString()}{" "}
-                {new Date(tx.transactionDate).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
+              <TableCell>{`${
+                tx.friendName[0].toUpperCase() + tx.friendName.slice(1)
+              }`}</TableCell>
+              <TableCell>
+                {(() => {
+                  const now = new Date();
+                  const txDate = new Date(tx.transactionDate);
+                  const diffTime = now.getTime() - txDate.getTime();
+                  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+                  if (diffDays === 0) return "Today";
+                  if (diffDays === 1) return "1 day ago";
+                  return `${diffDays} days ago`;
+                })()}
               </TableCell>
+
               <TableCell className="text-right">${tx.amount}</TableCell>
             </TableRow>
           ))}
