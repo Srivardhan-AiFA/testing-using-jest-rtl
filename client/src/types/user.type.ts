@@ -25,3 +25,18 @@ export type Note = {
   notes: SingleNote[];
   message: string;
 };
+
+export type Transaction = {
+  _id: string;
+  friendName: string;
+  friendId: string;
+  amount: number;
+  transactionDate: string;
+};
+
+export type TransactionState = {
+  loading: boolean;
+  error: string | null;
+  transactions: Transaction[];
+  message: string;
+};

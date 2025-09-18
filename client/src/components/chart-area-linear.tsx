@@ -51,9 +51,9 @@ export function ChartAreaLinear() {
             <Area
               dataKey="desktop"
               type="linear"
-              fill="var(--color-desktop)"
+              fill="oklch(0.7 0.16 253.64)"
               fillOpacity={0.4}
-              stroke="var(--color-desktop)"
+              stroke="oklch(0.42 0.2 265.5)"
             />
           </AreaChart>
         </ResponsiveContainer>

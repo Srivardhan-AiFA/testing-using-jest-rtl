@@ -1,4 +1,4 @@
-import { Note } from "../models/notes.model";
+import { Note } from "../models/account.model";
 import { userId } from "../types/user.type";
 
 export const addToFavorite = async (

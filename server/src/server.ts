@@ -7,7 +7,7 @@ import { connectDB } from "./config/db.config";
 
 // routes
 import authRoutes from "./routes/auth.routes";
-import noteRoutes from "./routes/notes.routes";
+import accountRoutes from "./routes/accounts.routes";
 import servicesRoutes from "./routes/services.routes";
 
 // rate limiters
@@ -23,7 +23,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/auth", authRoutes);
-app.use("/notes", noteRoutes);
+app.use("/accounts", accountRoutes);
 app.use("/services", servicesRoutes);
 
 const PORT = process.env.PORT || 3000;

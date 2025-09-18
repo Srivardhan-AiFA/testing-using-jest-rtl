@@ -12,7 +12,11 @@ import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { Button } from "./ui/button";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "@/app/store";
-import { addFavorite, deleteNote, editNote } from "@/features/notes/noteSlice";
+import {
+  addFavorite,
+  deleteNote,
+  editNote,
+} from "@/features/accounts/accountsSlice";
 import {
   AlertDialog,
   AlertDialogAction,

@@ -1,3 +1,4 @@
+import type { RootState } from "@/app/store";
 import {
   Table,
   TableBody,
@@ -6,15 +7,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useSelector } from "react-redux";
 
 export default function TableCustom() {
-  const rows = [
-    { name: "Emma Johnson", transfer: "2 days ago", amount: "$1,200.00" },
-    { name: "Michael Brown", transfer: "5 days ago", amount: "$450.50" },
-    { name: "Sophia Williams", transfer: "1 week ago", amount: "$980.00" },
-    { name: "Liam Davis", transfer: "10 days ago", amount: "$300.00" },
-    { name: "Olivia Miller", transfer: "14 days ago", amount: "$2,150.00" },
-  ];
+  const { transactions, loading, error } = useSelector(
+    (state: RootState) => state.notes
+  );
 
   return (
     <div>
@@ -27,11 +25,38 @@ export default function TableCustom() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {rows.map((row, idx) => (
-            <TableRow key={idx} className="border-b-0">
-              <TableCell>{row.name}</TableCell>
-              <TableCell className="text-center">{row.transfer}</TableCell>
-              <TableCell className="text-right">{row.amount}</TableCell>
+          {loading && (
+            <TableRow>
+              <TableCell colSpan={3} className="text-center">
+                Loading...
+              </TableCell>
+            </TableRow>
+          )}
+          {error && (
+            <TableRow>
+              <TableCell colSpan={3} className="text-center text-red-500">
+                {error}
+              </TableCell>
+            </TableRow>
+          )}
+          {!loading && !error && transactions.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={3} className="text-center">
+                No transactions found
+              </TableCell>
+            </TableRow>
+          )}
+          {transactions.map((tx) => (
+            <TableRow key={tx._id} className="border-b-0">
+              <TableCell>{tx.friendName}</TableCell>
+              <TableCell className="text-center">
+                {new Date(tx.transactionDate).toLocaleDateString()}{" "}
+                {new Date(tx.transactionDate).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </TableCell>
+              <TableCell className="text-right">${tx.amount}</TableCell>
             </TableRow>
           ))}
         </TableBody>

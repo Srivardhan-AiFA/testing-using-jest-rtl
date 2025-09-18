@@ -1,3 +1,4 @@
+import type { AppDispatch } from "@/app/store";
 import AccountsInformation from "@/components/accounts-information";
 import { AppSidebar } from "@/components/app-sidebar";
 import CardChart, { type ChartData } from "@/components/card-chart";
@@ -9,6 +10,9 @@ import Downloads from "@/components/downloads";
 import NavDashboard from "@/components/nav-dashboard";
 import RefferToFriends from "@/components/reffer-to-friends";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { getLastTransactions } from "@/features/accounts/accountsSlice";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 export default function Dashboard() {
   const chartData1: ChartData[] = [
@@ -46,6 +50,12 @@ export default function Dashboard() {
     { month: "May", desktop: 245 },
     { month: "June", desktop: 158 },
   ];
+
+  const dispatch: AppDispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getLastTransactions());
+  }, [dispatch]);
 
   return (
     <SidebarProvider>

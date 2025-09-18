@@ -27,6 +27,8 @@ export const signupAPI = createAsyncThunk<
   { rejectValue: string }
 >("auth/signupAPI", async (userData, { rejectWithValue }) => {
   try {
+    userData.firstname = userData.firstname.toLowerCase();
+    userData.lastname = userData.lastname.toLowerCase();
     const res = await axios.post(
       `${import.meta.env.VITE_BACKEND_URL}/auth/signup`,
       userData
