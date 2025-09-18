@@ -4,8 +4,7 @@ import axios from "axios";
 interface AuthState {
   user: {
     _id: string;
-    firstname: string;
-    lastname: string;
+    username: string;
     email: string;
     token: string;
   } | null;
@@ -23,12 +22,11 @@ const initialState: AuthState = {
 
 export const signupAPI = createAsyncThunk<
   AuthState["user"],
-  { firstname: string; lastname: string; email: string; password: string },
+  { username: string; email: string; password: string },
   { rejectValue: string }
 >("auth/signupAPI", async (userData, { rejectWithValue }) => {
   try {
-    userData.firstname = userData.firstname.toLowerCase();
-    userData.lastname = userData.lastname.toLowerCase();
+    userData.username = userData.username.toLowerCase();
     const res = await axios.post(
       `${import.meta.env.VITE_BACKEND_URL}/auth/signup`,
       userData

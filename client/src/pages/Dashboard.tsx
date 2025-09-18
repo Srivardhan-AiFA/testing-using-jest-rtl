@@ -11,6 +11,7 @@ import NavDashboard from "@/components/nav-dashboard";
 import RefferToFriends from "@/components/reffer-to-friends";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { getLastTransactions } from "@/features/accounts/accountsSlice";
+import { getAllUsers } from "@/features/sevices/serviceSlice";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
@@ -55,7 +56,9 @@ export default function Dashboard() {
 
   useEffect(() => {
     dispatch(getLastTransactions());
-  }, [dispatch]);
+    dispatch(getAllUsers());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <SidebarProvider>

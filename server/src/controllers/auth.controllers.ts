@@ -5,7 +5,7 @@ import { comparePassword, hashPassword } from "../utils/bcrypt.utils";
 
 export const signup = async (req: Request, res: Response) => {
   try {
-    const { firstname, lastname, email, password } = req.body;
+    const { username, email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -17,8 +17,7 @@ export const signup = async (req: Request, res: Response) => {
     const hashedPassword = hashPassword(password);
 
     const user = await User.create({
-      firstname,
-      lastname,
+      username,
       email,
       password: await hashedPassword,
     });
@@ -28,8 +27,7 @@ export const signup = async (req: Request, res: Response) => {
     return res.status(201).json({
       user: {
         _id: user._id,
-        firstname: user.firstname,
-        lastname: user.lastname,
+        username: user.username,
         email: user.email,
         token,
       },
@@ -56,8 +54,7 @@ export const signin = async (req: Request, res: Response) => {
     return res.status(200).json({
       user: {
         _id: user._id,
-        firstname: user.firstname,
-        lastname: user.lastname,
+        username: user.username,
         email: user.email,
         token,
       },

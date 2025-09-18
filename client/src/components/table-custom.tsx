@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 
 export default function TableCustom() {
   const { transactions, loading, error } = useSelector(
-    (state: RootState) => state.notes
+    (state: RootState) => state.accounts
   );
 
   return (
@@ -46,8 +46,8 @@ export default function TableCustom() {
               </TableCell>
             </TableRow>
           )}
-          {transactions.map((tx) => (
-            <TableRow key={tx._id} className="border-b-0">
+          {transactions.map((tx, index) => (
+            <TableRow key={index} className="border-b-0">
               <TableCell>{tx.friendName}</TableCell>
               <TableCell className="text-center">
                 {new Date(tx.transactionDate).toLocaleDateString()}{" "}

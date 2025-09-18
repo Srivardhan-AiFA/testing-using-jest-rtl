@@ -27,7 +27,6 @@ export type Note = {
 };
 
 export type Transaction = {
-  _id: string;
   friendName: string;
   friendId: string;
   amount: number;
@@ -40,3 +39,14 @@ export type TransactionState = {
   transactions: Transaction[];
   message: string;
 };
+
+// types/user.type.ts
+export type SignleUser = {
+  username: string;
+};
+
+export interface AllUsersState {
+  loading: boolean;
+  error: string | null;
+  users: string[];
+}

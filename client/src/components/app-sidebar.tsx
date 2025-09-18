@@ -160,7 +160,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   if (state) {
     data.user.email = state.email;
-    data.user.name = `${state.firstname} ${state.lastname}`;
+    data.user.name = state.username;
   }
 
   return (

@@ -14,7 +14,6 @@ export const getLastTransactions = async (req: AuthRequest, res: Response) => {
     const account = await AccountModel.findOne({
       userId: new mongoose.Types.ObjectId(userId as string),
     });
-    console.log(account, userId);
 
     if (!account) {
       return res.status(200).json({
@@ -55,7 +54,7 @@ export const addTransaction = async (req: AuthRequest, res: Response) => {
     }
 
     // safer: use email or _id instead of firstname
-    const friend = await User.findOne({ firstname: friendName });
+    const friend = await User.findOne({ username: friendName });
     if (!friend) {
       return res
         .status(404)
@@ -67,7 +66,7 @@ export const addTransaction = async (req: AuthRequest, res: Response) => {
       {
         $push: {
           transactions: {
-            friendName: friend.firstname,
+            friendName: friend.username,
             friendId: friend._id,
             amount,
             transactionDate: new Date(),

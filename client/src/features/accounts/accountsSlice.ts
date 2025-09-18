@@ -26,25 +26,23 @@ const transactionsSlice = createSlice({
       .addCase(addTransaction.fulfilled, (state, action) => {
         state.loading = false;
         state.message = action.payload.message;
-        state.transactions = [
-          action.payload.transaction,
-          ...state.transactions,
-        ];
+        state.transactions = action.payload.transactions;
       })
       .addCase(addTransaction.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Error";
-      });
+      })
 
-    builder
       .addCase(getLastTransactions.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(getLastTransactions.fulfilled, (state, action) => {
         state.loading = false;
-        state.transactions = action.payload.transactions;
+
+        state.transactions = [...action.payload.transactions];
       })
+
       .addCase(getLastTransactions.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Error";
@@ -55,9 +53,8 @@ const transactionsSlice = createSlice({
 export const { clearMessage } = transactionsSlice.actions;
 export default transactionsSlice.reducer;
 
-// Add a new transaction
 export const addTransaction = createAsyncThunk<
-  { message: string; transaction: Transaction },
+  { message: string; transactions: Transaction[] },
   { friendName: string; amount: number },
   { rejectValue: string }
 >(
@@ -71,11 +68,11 @@ export const addTransaction = createAsyncThunk<
       const res = await axios.post(
         `${
           import.meta.env.VITE_BACKEND_URL
-        }/accounts/transactions/getPrevTransactions`,
+        }/accounts/transactions/addNewAccount`,
         { friendName, amount },
         config
       );
-      return res.data as { message: string; transaction: Transaction };
+      return res.data as { message: string; transactions: Transaction[] };
     } catch (error) {
       console.error(error);
       return rejectWithValue("Adding transaction failed");

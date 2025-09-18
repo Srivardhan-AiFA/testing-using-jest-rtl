@@ -15,8 +15,7 @@ export function SignupForm({
 }: React.ComponentProps<"div">) {
   const [eye, setEye] = useState(false);
   const [user, setUser] = useState({
-    firstname: "",
-    lastname: "",
+    username: "",
     email: "",
     password: "",
   });
@@ -60,29 +59,16 @@ export function SignupForm({
             </h1>
           </div>
 
-          {/* firstname */}
+          {/* username */}
           <div className="grid gap-3">
-            <Label htmlFor="firstname">Firstname</Label>
+            <Label htmlFor="lastname">Username</Label>
             <Input
-              id="firstname"
-              type="text"
-              placeholder="Chandler"
-              required
-              value={user.firstname}
-              onChange={(e) => setUser({ ...user, firstname: e.target.value })}
-            />
-          </div>
-
-          {/* lastname */}
-          <div className="grid gap-3">
-            <Label htmlFor="lastname">Lastname</Label>
-            <Input
-              id="lastname"
+              id="usename"
               type="text"
               placeholder="Bing"
               required
-              value={user.lastname}
-              onChange={(e) => setUser({ ...user, lastname: e.target.value })}
+              value={user.username}
+              onChange={(e) => setUser({ ...user, username: e.target.value })}
             />
           </div>
 

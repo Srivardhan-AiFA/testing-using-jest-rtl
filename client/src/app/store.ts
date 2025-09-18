@@ -1,15 +1,40 @@
-import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "../features/auth/authSlice";
-import noteReducer from "@/features/accounts/accountsSlice";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import storage from "redux-persist/lib/storage"; // defaults to localStorage
+import { persistReducer, persistStore } from "redux-persist";
 
-export const store = configureStore({
-  reducer: {
-    user: authReducer,
-    notes: noteReducer,
-  },
+import authReducer from "../features/auth/authSlice";
+import accountReducer from "@/features/accounts/accountsSlice";
+import serviceReducer from "@/features/sevices/serviceSlice";
+
+// 1️⃣ Persist config
+const persistConfig = {
+  key: "root",
+  storage,
+  whitelist: ["user", "notes", "services"], // slices you want to persist
+};
+
+// 2️⃣ Combine reducers
+const rootReducer = combineReducers({
+  user: authReducer,
+  accounts: accountReducer,
+  services: serviceReducer,
 });
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
+// 3️⃣ Wrap with persistReducer
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+// 4️⃣ Create store
+export const store = configureStore({
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false, // required for redux-persist
+    }),
+});
+
+// 5️⃣ Persistor
+export const persistor = persistStore(store);
+
+// 6️⃣ Types
 export type RootState = ReturnType<typeof store.getState>;
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;
