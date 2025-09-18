@@ -16,7 +16,7 @@ export default function CardChartHistory() {
         <div className="flex">
           <div>
             <CardHeader className="w-fit">
-              <CardDescription className="text-gray-700 font-semibold">
+              <CardDescription className="text-gray-500 font-semibold">
                 Your Portfolio Balance
               </CardDescription>
               <div className="flex items-center">

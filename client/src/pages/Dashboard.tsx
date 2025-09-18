@@ -3,7 +3,9 @@ import { AppSidebar } from "@/components/app-sidebar";
 import CardChart, { type ChartData } from "@/components/card-chart";
 import CardChartDetaild from "@/components/card-chart-detaild";
 import CardChartHistory from "@/components/card-chart-history";
+import CryptoNews from "@/components/crypto-news";
 import CurrencyCalculator from "@/components/currency-calculator";
+import Downloads from "@/components/downloads";
 import NavDashboard from "@/components/nav-dashboard";
 import RefferToFriends from "@/components/reffer-to-friends";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -95,6 +97,14 @@ export default function Dashboard() {
             </div>
             <div className="col-span-4 border-2 rounded-sm">
               <CurrencyCalculator />
+            </div>
+          </div>
+          <div className="grid grid-cols-12 gap-5 mx-5 mt-5">
+            <div className="col-span-8 border-2 rounded-md p-7">
+              <CryptoNews />
+            </div>
+            <div className="col-span-4">
+              <Downloads />
             </div>
           </div>
         </div>

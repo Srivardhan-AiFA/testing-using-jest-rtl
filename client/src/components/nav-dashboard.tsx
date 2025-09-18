@@ -18,11 +18,11 @@ export default function NavDashboard() {
               Crypto
             </h2>
           </div>
-          <div className="flex items-center bg-blue-100 py-1 rounded-xs px-2">
+          <div className="flex items-center dark:bg-blue-300 bg-blue-100 py-1 rounded-xs px-2">
             <Search size={15} />
             <input
               type="text"
-              className="outline-0 border-0 pl-3 pr-1 text-sm py-1"
+              className="outline-0 border-0 pl-3 text-gray-900 pr-1 text-sm py-1"
             />
           </div>
         </div>
