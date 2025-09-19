@@ -55,11 +55,25 @@ export default function TableCustom() {
                 {(() => {
                   const now = new Date();
                   const txDate = new Date(tx.transactionDate);
-                  const diffTime = now.getTime() - txDate.getTime();
+
+                  // normalize both dates to midnight
+                  const startOfToday = new Date(
+                    now.getFullYear(),
+                    now.getMonth(),
+                    now.getDate()
+                  );
+                  const startOfTxDay = new Date(
+                    txDate.getFullYear(),
+                    txDate.getMonth(),
+                    txDate.getDate()
+                  );
+
+                  const diffTime =
+                    startOfToday.getTime() - startOfTxDay.getTime();
                   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
                   if (diffDays === 0) return "Today";
-                  if (diffDays === 1) return "1 day ago";
+                  if (diffDays === 1) return "Yesterday";
                   return `${diffDays} days ago`;
                 })()}
               </TableCell>

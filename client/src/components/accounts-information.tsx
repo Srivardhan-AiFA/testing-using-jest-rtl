@@ -9,7 +9,6 @@ export default function AccountsInformation() {
         <AddNewTranasction />
       </div>
 
-      {/* Scrollable wrapper */}
       <div className="max-h-64 overflow-y-auto mt-3 rounded-md border">
         <TableCustom />
       </div>

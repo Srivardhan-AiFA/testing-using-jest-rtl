@@ -1,7 +1,7 @@
 import type { AppDispatch } from "@/app/store";
 import AccountsInformation from "@/components/accounts-information";
 import { AppSidebar } from "@/components/app-sidebar";
-import CardChart, { type ChartData } from "@/components/card-chart";
+import CardChart from "@/components/card-chart";
 import CardChartDetaild from "@/components/card-chart-detaild";
 import CardChartHistory from "@/components/card-chart-history";
 import CryptoNews from "@/components/crypto-news";
@@ -12,6 +12,7 @@ import RefferToFriends from "@/components/reffer-to-friends";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { getLastTransactions } from "@/features/accounts/accountsSlice";
 import { getAllUsers } from "@/features/sevices/serviceSlice";
+import type { ChartData } from "@/types/chart.types";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
