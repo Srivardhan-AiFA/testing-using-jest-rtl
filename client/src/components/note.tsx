@@ -28,9 +28,10 @@ import {
 type NoteProps = {
   note: SingleNote;
   bgColor: string;
+  setActiveCategory: (category: string) => void;
 };
 
-export default function Note({ note, bgColor }: NoteProps) {
+export default function Note({ note, bgColor, setActiveCategory }: NoteProps) {
   const [text, setText] = useState(note.content);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -58,14 +59,17 @@ export default function Note({ note, bgColor }: NoteProps) {
     note: { title: string; content: string; category: string },
     id: string
   ) => {
+    setActiveCategory(note.category);
     dispatch(editNote({ note, id }));
   };
 
   const handleDelete = (id: string) => {
+    setActiveCategory("all");
     dispatch(deleteNote({ id }));
   };
 
   const handleFav = (id: string) => {
+    setActiveCategory("all");
     dispatch(addFavorite({ id }));
   };
 

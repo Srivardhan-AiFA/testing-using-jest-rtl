@@ -239,20 +239,19 @@ export const noteSlice = createSlice({
           "unable to add Note";
       })
 
-      .addCase(addFavorite.pending, (state) => {
+      .addCase(addFavorite.pending, (state, action) => {
         state.loading = true;
         state.error = null;
-      })
-      .addCase(addFavorite.fulfilled, (state, action) => {
-        state.loading = false;
-        state.message = action.payload.message;
-
-        const addFav = action.payload;
-        const index = state.notes.findIndex((n) => n._id === addFav.id);
+        const id = action.meta.arg.id;
+        const index = state.notes.findIndex((n) => n._id === id);
 
         if (index !== -1) {
           state.notes[index].isFavorite = !state.notes[index].isFavorite;
         }
+      })
+      .addCase(addFavorite.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload.message;
       })
       .addCase(addFavorite.rejected, (state, action) => {
         state.loading = false;
@@ -260,6 +259,12 @@ export const noteSlice = createSlice({
           (action.payload as string) ||
           action.error.message ||
           "unable to add Favriote";
+        const id = action.meta.arg.id;
+        const index = state.notes.findIndex((n) => n._id === id);
+
+        if (index !== -1) {
+          state.notes[index].isFavorite = !state.notes[index].isFavorite;
+        }
       })
 
       .addCase(addCategory.pending, (state) => {

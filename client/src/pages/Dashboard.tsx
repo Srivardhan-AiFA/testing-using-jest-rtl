@@ -67,6 +67,7 @@ export default function Dashboard() {
   };
 
   const handleSubmit = () => {
+    setShowFavoritesButton(false);
     if (!note.content) return;
     if (!note.category) note.category = "all";
     dispatch(addNote(note));
@@ -228,7 +229,14 @@ export default function Dashboard() {
             {filteredNotes.map((note, index) => {
               const colors = ["#77a4eb", "#56df7a", "#f3c849", "#f36457"];
               const bgColor = colors[index % colors.length];
-              return <Note key={index} note={note} bgColor={bgColor} />;
+              return (
+                <Note
+                  key={index}
+                  note={note}
+                  bgColor={bgColor}
+                  setActiveCategory={setActiveCategory}
+                />
+              );
             })}
           </div>
         )}
