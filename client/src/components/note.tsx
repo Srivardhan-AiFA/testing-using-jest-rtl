@@ -59,7 +59,7 @@ export default function Note({ note, bgColor, setActiveCategory }: NoteProps) {
     note: { title: string; content: string; category: string },
     id: string
   ) => {
-    setActiveCategory(note.category);
+    setActiveCategory("all");
     dispatch(editNote({ note, id }));
   };
 
