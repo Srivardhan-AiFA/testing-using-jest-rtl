@@ -27,12 +27,13 @@ export default function Dashboard() {
     updatedAt: "",
   });
 
-  const { notes, loading, error } = useSelector(
-    (state: RootState) => state.notes
-  );
+  const {
+    notes = [],
+    categories = [],
+    loading,
+    error,
+  } = useSelector((state: RootState) => state.notes);
   const [filteredNotes, setFilteredNotes] = useState<SingleNote[]>(notes);
-
-  const [showFavoritesButton, setShowFavoritesButton] = useState<boolean>(true);
 
   const [activeCategory, setActiveCategory] = useState<string>("all");
 
@@ -42,9 +43,7 @@ export default function Dashboard() {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const dispatch = useDispatch<AppDispatch>();
 
-  const categories: string[] = Array.from(
-    new Set(notes.map((note) => note.category).sort())
-  );
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -57,9 +56,15 @@ export default function Dashboard() {
     setFilteredNotes(notes);
   }, [notes]);
 
+  const fetchNotes = (category: string = "all") => {
+    console.log(category);
+    dispatch(getNotes({ category: category }));
+  };
+
   useEffect(() => {
-    dispatch(getNotes());
-  }, [dispatch]);
+    fetchNotes("all");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);
@@ -67,7 +72,6 @@ export default function Dashboard() {
   };
 
   const handleSubmit = () => {
-    setShowFavoritesButton(false);
     if (!note.content) return;
     if (!note.category) note.category = "all";
     dispatch(addNote(note));
@@ -76,21 +80,15 @@ export default function Dashboard() {
     setIsAddingNewCategory(false);
   };
 
-  const handleFilter = (category: string) => {
-    setActiveCategory(category);
-    setShowFavoritesButton(true);
-    if (category === "favorite") {
-      setShowFavoritesButton(false);
-      setFilteredNotes(notes.filter((note) => note.isFavorite));
-    } else if (category === "all") {
-      setFilteredNotes(notes);
-    } else {
-      setFilteredNotes(notes.filter((note) => note.category === category));
-    }
-  };
-
   const handleFilterWithFavorite = () => {
-    setFilteredNotes(filteredNotes.filter((note) => note.isFavorite));
+    const newShowOnlyFavorites = !showOnlyFavorites;
+
+    const favNotes = notes.filter((note) =>
+      newShowOnlyFavorites ? note.isFavorite : true
+    );
+
+    setFilteredNotes(favNotes);
+    setShowOnlyFavorites(newShowOnlyFavorites);
   };
 
   return (
@@ -177,7 +175,11 @@ export default function Dashboard() {
             return (
               <div key={index}>
                 <p
-                  onClick={() => handleFilter(category)}
+                  onClick={() => {
+                    setShowOnlyFavorites(false);
+                    setActiveCategory(category);
+                    fetchNotes(category);
+                  }}
                   className={`px-3 py-1 cursor-pointer rounded-2xl border min-w-16 text-center text-xs font-semibold mt-1 uppercase
                     ${
                       activeCategory === category ? "bg-gray-200" : "bg-white"
@@ -190,11 +192,9 @@ export default function Dashboard() {
           })}
           <span className="border-r-2 mt-1" />
           <p
-            onClick={() => {
-              handleFilter("favorite");
-            }}
+            onClick={handleFilterWithFavorite}
             className={`px-3 py-1 cursor-pointer rounded-2xl min-w-16 text-center text-xs font-semibold mt-1 uppercase border-1 border-red-400 ${
-              activeCategory === "favorite" ? "bg-red-500" : "bg-[#f36457]"
+              showOnlyFavorites ? "bg-red-500" : "bg-[#f36457]"
             }`}
           >
             Favorites
@@ -202,36 +202,23 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="reletive mb-10">
-        <div className="mt-6">
-          {showFavoritesButton ? (
-            <Button
-              className="cursor-pointer absolute bg-[#56df7a] hover:bg-green-400 text-gray-900 mt-0.5"
-              onClick={handleFilterWithFavorite}
-            >
-              Favorites
-            </Button>
-          ) : (
-            ""
-          )}
-        </div>
-
-        {/* {loading && <p>Loading...</p>} */}
-
-        {error && <p className="text-red-500">{error}</p>}
-
-        {!loading && !error && filteredNotes.length === 0 && (
+      <div className="reletive mb-10 flex flex-col items-center">
+        {loading ? (
+          <div className="flex justify-center items-center h-60">
+            <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent border-solid rounded-full animate-spin"></div>
+          </div>
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : filteredNotes.length === 0 ? (
           <p className="text-gray-500 text-center mt-4">No notes available</p>
-        )}
-
-        {filteredNotes.length > 0 && (
-          <div className="flex flex-wrap gap-4 mt-6 justify-center">
+        ) : (
+          <div className="flex flex-wrap gap-4 mt-6 justify-center w-full">
             {filteredNotes.map((note, index) => {
               const colors = ["#77a4eb", "#56df7a", "#f3c849", "#f36457"];
               const bgColor = colors[index % colors.length];
               return (
                 <Note
-                  key={index}
+                  key={note._id || index} // better key if you have _id
                   note={note}
                   bgColor={bgColor}
                   setActiveCategory={setActiveCategory}

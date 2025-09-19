@@ -7,6 +7,7 @@ const initialState: Note = {
   error: null,
   notes: [] as SingleNote[],
   message: "",
+  categories: [],
 };
 
 export const addFavorite = createAsyncThunk<
@@ -64,10 +65,10 @@ export const addCategory = createAsyncThunk<
 });
 
 export const getNotes = createAsyncThunk<
-  SingleNote[],
-  void,
+  { notes: SingleNote[]; categories: string[] }, // return both
+  { category: string },
   { rejectValue: string }
->("notes/getNotes", async (_, { rejectWithValue }) => {
+>("notes/getNotes", async ({ category }, { rejectWithValue }) => {
   try {
     const token = localStorage.getItem("token");
     const config = {
@@ -75,16 +76,29 @@ export const getNotes = createAsyncThunk<
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URL}/notes/getall`,
+
+    const res = await axios.get<SingleNote[]>(
+      `${import.meta.env.VITE_BACKEND_URL}/notes/getall/${category}`,
       config
     );
-    return res.data as SingleNote[];
+
+    const notes: SingleNote[] = res.data;
+
+    let categories: string[] = [];
+
+    if (category === "all" && Array.isArray(notes)) {
+      categories = Array.from(
+        new Set(notes.map((note) => note.category))
+      ).sort();
+    }
+
+    return { notes, categories };
   } catch (error) {
     console.log(error);
     return rejectWithValue("Getting Notes Failed");
   }
 });
+
 export const editNote = createAsyncThunk<
   { message: string; updatedNote: SingleNote },
   { note: { title: string; content: string; category: string }; id: string },
@@ -183,7 +197,10 @@ export const noteSlice = createSlice({
       })
       .addCase(getNotes.fulfilled, (state, action) => {
         state.loading = false;
-        state.notes = action.payload;
+        state.notes = action.payload.notes;
+        if (action.payload.categories.length !== 0) {
+          state.categories = action.payload.categories;
+        }
       })
       .addCase(getNotes.rejected, (state, action) => {
         state.loading = false;
@@ -240,7 +257,6 @@ export const noteSlice = createSlice({
       })
 
       .addCase(addFavorite.pending, (state, action) => {
-        state.loading = true;
         state.error = null;
         const id = action.meta.arg.id;
         const index = state.notes.findIndex((n) => n._id === id);
@@ -250,11 +266,9 @@ export const noteSlice = createSlice({
         }
       })
       .addCase(addFavorite.fulfilled, (state, action) => {
-        state.loading = false;
         state.message = action.payload.message;
       })
       .addCase(addFavorite.rejected, (state, action) => {
-        state.loading = false;
         state.error =
           (action.payload as string) ||
           action.error.message ||

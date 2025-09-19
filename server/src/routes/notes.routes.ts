@@ -21,8 +21,8 @@ router.post(
   validateRequest,
   createNote
 );
-router.get("/getall", notesLimiter, protectedRoute, getAllNotes);
-router.get("/get/:id", notesLimiter, protectedRoute, getNote); // not using currently
+router.get("/getall/:category", notesLimiter, protectedRoute, getAllNotes);
+router.get("/get/:id", notesLimiter, protectedRoute, getNote);
 router.put(
   "/update/:id",
   notesLimiter,

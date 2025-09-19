@@ -32,7 +32,6 @@ type NoteProps = {
 };
 
 export default function Note({ note, bgColor, setActiveCategory }: NoteProps) {
-  const [text, setText] = useState(note.content);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -42,16 +41,14 @@ export default function Note({ note, bgColor, setActiveCategory }: NoteProps) {
     content: note.content,
     category: note.category,
   });
-
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
-  }, [text]);
+  }, [updatedNote.content]);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setText(e.target.value);
     setUpdatedNote({ ...updatedNote, content: e.target.value });
   };
 
@@ -82,7 +79,17 @@ export default function Note({ note, bgColor, setActiveCategory }: NoteProps) {
         <h3 className="outfit text-xl">{note.title}</h3>
         <div className="flex mt-2 items-center">
           <div>
-            <Dialog>
+            <Dialog
+              onOpenChange={(open) => {
+                if (open) {
+                  setUpdatedNote({
+                    title: note.title,
+                    content: note.content,
+                    category: note.category,
+                  });
+                }
+              }}
+            >
               <DialogTrigger>
                 <SquarePen size={15} className="cursor-pointer mt-1" />
               </DialogTrigger>
@@ -94,18 +101,18 @@ export default function Note({ note, bgColor, setActiveCategory }: NoteProps) {
                       placeholder="Title"
                       className="w-11/12 border-0 outline-0 text-xl outfit"
                       value={updatedNote.title}
-                      onChange={(e) => {
-                        setUpdatedNote({
-                          ...updatedNote,
+                      onChange={(e) =>
+                        setUpdatedNote((prev) => ({
+                          ...prev,
                           title: e.target.value,
-                        });
-                      }}
+                        }))
+                      }
                     />
                   </DialogTitle>
                   <DialogDescription>
                     <textarea
                       ref={textareaRef}
-                      value={text}
+                      value={updatedNote.content}
                       onChange={handleChange}
                       className="resize-none overflow-hidden mt-2 border-0 rounded-md w-11/12 outline-0 text-sm inter"
                       rows={10}
@@ -117,12 +124,12 @@ export default function Note({ note, bgColor, setActiveCategory }: NoteProps) {
                         type="text"
                         value={updatedNote.category}
                         className="w-11/12 border-0 outline-0 outfit"
-                        onChange={(e) => {
-                          setUpdatedNote({
-                            ...updatedNote,
+                        onChange={(e) =>
+                          setUpdatedNote((prev) => ({
+                            ...prev,
                             category: e.target.value.toLowerCase(),
-                          });
-                        }}
+                          }))
+                        }
                       />
                     </div>
                   </DialogDescription>
@@ -190,7 +197,7 @@ export default function Note({ note, bgColor, setActiveCategory }: NoteProps) {
           category: <span className="capitalize">{note.category}</span>
         </p>
         <p className="text-xs text-gray-700 font-semibold mt-1">
-          {note.createdAt.slice(0, 10)}
+          {note.createdAt && note.createdAt.slice(0, 10)}
         </p>
       </div>
     </div>

@@ -24,4 +24,5 @@ export type Note = {
   error: string | null;
   notes: SingleNote[];
   message: string;
+  categories: string[];
 };

@@ -22,13 +22,17 @@ export const createNote = async (req: AuthRequest, res: Response) => {
 export const getAllNotes = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId;
+    const category = req.params.category || "all";
 
-    const notes = await Note.find({ userId });
+    const query: any = { userId };
+    if (category !== "all") query.category = category;
 
-    return res.status(200).send(notes);
+    const notes = await Note.find(query).sort({ createdAt: -1 });
+
+    return res.status(200).json(notes);
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: "Internale Server Error" });
+    console.error("Error fetching notes:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
