@@ -25,12 +25,12 @@ export default function Home() {
       <main>
         <div>
           <h1 className="outfit text-9xl text-center mt-20 font-semibold">
-            Notely
+            Google-Calendar
           </h1>
           <p className="text-center w-1/3 mx-auto mt-10 text-sm inter">
-            Notely is your go-to minimal note-taking app designed for seamless
-            productivity. With a clean interface and intuitive features, jot
-            down your ideas and organize your notes like never before.
+            Easily create events and bring people together. Whether it’s a
+            casual hangout or an important meeting, invite your friends, family,
+            or colleagues in just a few clicks.
           </p>
         </div>
       </main>
