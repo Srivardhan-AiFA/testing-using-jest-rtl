@@ -11,6 +11,9 @@ export type ChartAreaDefaultProps = {
   trend: string;
   trendRate: number;
   displayName: string;
+  startColor: string;
+  stopColor: string;
+  type: string;
 };
 
 export type ChartAreaDefaultPropsAreaOf = {

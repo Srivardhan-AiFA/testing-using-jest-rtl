@@ -69,7 +69,7 @@ export default function Dashboard() {
           <NavDashboard />
         </header>
         <div className="w-full mt-5 px-5 mb-10">
-          <div className=" border-1 p-3 mx-5 rounded-xl font-semibold">
+          <div className=" border-1 p-3 mx-5 rounded-sm font-semibold">
             Crypto
           </div>
           <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-4 mt-5 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
@@ -79,6 +79,9 @@ export default function Dashboard() {
               trend="up"
               trendRate={23}
               displayName="SOL"
+              startColor="#121261"
+              stopColor="#407CFF"
+              type="linear"
             />
             <CardChart
               chartData={chartData2}
@@ -86,6 +89,9 @@ export default function Dashboard() {
               trend="up"
               trendRate={12}
               displayName="ETH"
+              startColor="#A60040"
+              stopColor="#FF9E36"
+              type="natural"
             />
             <CardChart
               chartData={chartData3}
@@ -93,6 +99,9 @@ export default function Dashboard() {
               trend="down"
               trendRate={3}
               displayName="BTC"
+              startColor="#040075"
+              stopColor="#FF0062"
+              type="linear"
             />
             <CardChart
               chartData={chartData4}
@@ -100,6 +109,9 @@ export default function Dashboard() {
               trend="up"
               trendRate={9}
               displayName="USDT"
+              startColor=""
+              stopColor=""
+              type="step"
             />
           </div>
           <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-2 mt-5 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
@@ -110,7 +122,7 @@ export default function Dashboard() {
             <div className="col-span-5 border-2 p-3 rounded-sm">
               <AccountsInformation />
             </div>
-            <div className="col-span-3 rounded-sm border-2 flex flex-col items-center justify-center">
+            <div className="col-span-3 rounded-sm border-2 flex flex-col items-center justify-center bg-[#242424]">
               <RefferToFriends />
             </div>
             <div className="col-span-4 border-2 rounded-sm">

@@ -171,7 +171,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarFooter>
       </ThemeProvider>
       <SidebarRail />
-      <SidebarContent>
+      <SidebarContent className="bg-[#242424]">
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>

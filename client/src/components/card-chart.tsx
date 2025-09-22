@@ -1,7 +1,19 @@
+// card-chart.tsx
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Card, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { ChartAreaDefault } from "./chart-area-default";
-import type { ChartAreaDefaultProps } from "@/types/chart.types";
+import type { ChartData } from "@/types/chart.types";
+
+export type CardChartProps = {
+  chartData: ChartData[];
+  money: number;
+  trend: "up" | "down";
+  trendRate: number;
+  displayName: string;
+  startColor: string;
+  stopColor: string;
+  type: "linear" | "monotone" | "step" | "natural" | "basis";
+};
 
 export default function CardChart({
   chartData,
@@ -9,7 +21,10 @@ export default function CardChart({
   trend,
   trendRate,
   displayName,
-}: ChartAreaDefaultProps) {
+  startColor,
+  stopColor,
+  type,
+}: CardChartProps) {
   return (
     <div>
       <Card className="@container/card py-0">
@@ -24,7 +39,7 @@ export default function CardChart({
               </CardTitle>
             </div>
             <div>
-              {trend == "up" ? (
+              {trend === "up" ? (
                 <div className="ml-2 font-semibold flex text-xs text-green-600">
                   {trendRate}%
                   <ChevronUp size={13} />
@@ -39,7 +54,12 @@ export default function CardChart({
           </div>
         </CardHeader>
         <CardFooter className="px-0 w-full">
-          <ChartAreaDefault chartData={chartData} />
+          <ChartAreaDefault
+            chartData={chartData}
+            startColor={startColor}
+            stopColor={stopColor}
+            type={type}
+          />
         </CardFooter>
       </Card>
     </div>

@@ -37,8 +37,10 @@ export function NavProjects({
   const { isMobile } = useSidebar();
 
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel className="uppercase">In-Built apps</SidebarGroupLabel>
+    <SidebarGroup className="group-data-[collapsible=icon]:hidden bg-[#242424] text-gray-200">
+      <SidebarGroupLabel className="uppercase text-gray-200">
+        In-Built apps
+      </SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
