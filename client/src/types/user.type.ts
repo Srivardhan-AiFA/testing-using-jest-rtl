@@ -35,4 +35,5 @@ export type GetNotesResponse = {
   total: number;
   totalPages: number;
   currentPage: number;
+  categories: string[];
 };

@@ -95,17 +95,7 @@ export const getNotes = createAsyncThunk<
     const total: number = res.data.total;
     const totalPages: number = res.data.totalPages;
     const currentPage: number = res.data.currentPage;
-
-    let categories: string[] = [];
-    if (category === "all" && page === 1 && Array.isArray(notes)) {
-      categories = Array.from(new Set(notes.map((note) => note.category))).sort(
-        (a, b) => {
-          if (a === "all") return -1;
-          if (b === "all") return 1;
-          return a.localeCompare(b);
-        }
-      );
-    }
+    const categories: string[] = res.data.categories;
 
     return { notes, categories, total, totalPages, currentPage };
   } catch (error) {
@@ -216,10 +206,7 @@ export const noteSlice = createSlice({
         state.total = action.payload.total;
         state.totalPages = action.payload.totalPages;
         state.currentPage = action.payload.currentPage;
-
-        if (action.payload.categories.length !== 0) {
-          state.categories = action.payload.categories;
-        }
+        state.categories = action.payload.categories;
       })
 
       .addCase(getNotes.rejected, (state, action) => {

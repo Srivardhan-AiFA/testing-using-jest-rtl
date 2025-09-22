@@ -7,6 +7,15 @@ import type { SingleNote } from "@/types/user.type";
 import Note from "@/components/note";
 
 import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -23,6 +32,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { DialogClose } from "@radix-ui/react-dialog";
+import { Label } from "@/components/ui/label";
 
 export default function Dashboard() {
   const dispatch = useDispatch<AppDispatch>();
@@ -33,6 +44,7 @@ export default function Dashboard() {
     loading,
     error,
     totalPages = 1,
+    total,
   } = useSelector((state: RootState) => state.notes);
 
   const [note, setNote] = useState<SingleNote>({
@@ -55,7 +67,7 @@ export default function Dashboard() {
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
   const [page, setPage] = useState<number>(1);
-  const [limit] = useState<number>(12);
+  const [limit, setLimit] = useState<number>(12);
 
   // Adjust textarea height
   useEffect(() => {
@@ -80,11 +92,16 @@ export default function Dashboard() {
   // Fetch notes whenever category or page changes
   useEffect(() => {
     dispatch(getNotes({ category: activeCategory, page, limit }));
-  }, [activeCategory, page, dispatch, limit]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);
     setNote((prev) => ({ ...prev, content: e.target.value }));
+  };
+
+  const handleLimitChange = () => {
+    dispatch(getNotes({ category: activeCategory, page, limit }));
   };
 
   const handleSubmit = () => {
@@ -187,34 +204,85 @@ export default function Dashboard() {
         </form>
       </div>
 
-      {/* Categories Filter */}
-      <div className="flex flex-wrap gap-4 mt-6 px-40">
-        <h4 className="mt-1.5 font-semibold text-sm">Categories:</h4>
-        {displayCategories.map((category, index) => (
-          <div key={index}>
-            <p
-              onClick={() => {
-                setShowOnlyFavorites(false);
-                setActiveCategory(category);
-                setPage(1); // reset page whenever category changes
-              }}
-              className={`px-3 py-1 cursor-pointer rounded-2xl border min-w-16 text-center text-xs font-semibold mt-1 uppercase ${
-                activeCategory === category ? "bg-gray-200" : "bg-white"
-              }`}
-            >
-              {category}
-            </p>
-          </div>
-        ))}
-        <span className="border-r-2 mt-1" />
-        <p
-          onClick={handleFilterWithFavorite}
-          className={`px-3 py-1 cursor-pointer rounded-2xl min-w-16 text-center text-xs font-semibold mt-1 uppercase border-1 border-red-400 ${
-            showOnlyFavorites ? "bg-red-500" : "bg-[#f36457]"
-          }`}
-        >
-          Favorites
-        </p>
+      <div>
+        {/* Categories Filter */}
+        <div className="flex flex-wrap gap-4 mt-6 px-40">
+          <h4 className="mt-1.5 font-semibold text-sm">Categories:</h4>
+          {displayCategories.map((category, index) => (
+            <div key={index}>
+              <p
+                onClick={() => {
+                  setShowOnlyFavorites(false);
+                  setActiveCategory(category);
+                  setPage(1); // reset page whenever category changes
+                }}
+                className={`px-3 py-1 cursor-pointer rounded-2xl border min-w-16 text-center text-xs font-semibold mt-1 uppercase ${
+                  activeCategory === category ? "bg-gray-200" : "bg-white"
+                }`}
+              >
+                {category}
+              </p>
+            </div>
+          ))}
+          <span className="border-r-2 mt-1" />
+          <p
+            onClick={handleFilterWithFavorite}
+            className={`px-3 cursor-pointer rounded-full min-w-16 text-xs pt-2 font-semibold uppercase border-1 border-red-400 ${
+              showOnlyFavorites ? "bg-red-500" : "bg-[#f36457]"
+            }`}
+          >
+            Favorites
+          </p>
+          <Dialog>
+            <form onSubmit={handleLimitChange}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="secondary"
+                  className="rounded-full cursor-pointer"
+                >
+                  Customize
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Customize The Notes Displayed</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-2">
+                  <p className="text-gray-600 font-medium text-sm">
+                    Total Notes: {total}
+                  </p>
+                  <p className="text-gray-600 font-medium text-sm">
+                    Per Page Notes: {limit}
+                  </p>
+                  <div className="grid gap-3">
+                    <Label htmlFor="username-1">Notes</Label>
+                    <Input
+                      id="limit"
+                      name="limit"
+                      defaultValue="@peduarte"
+                      type="number"
+                      max={total}
+                      onChange={(e) => {
+                        setLimit(Number(e.target.value));
+                      }}
+                      className="outline-0"
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                  </DialogClose>
+                  <DialogClose asChild>
+                    <Button type="submit" onClick={handleLimitChange}>
+                      Save changes
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </form>
+          </Dialog>
+        </div>
       </div>
 
       {/* Notes List */}

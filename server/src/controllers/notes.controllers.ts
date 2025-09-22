@@ -39,11 +39,21 @@ export const getAllNotes = async (req: AuthRequest, res: Response) => {
       .skip((page - 1) * limit)
       .limit(limit);
 
+    let categories = await Note.distinct("category", { userId });
+    categories = categories.sort((a, b) => a.localeCompare(b));
+    categories = ["all", ...categories];
+
+    // in case new user (no notes), only return ["all"]
+    if (categories.length === 1) {
+      categories = ["all"];
+    }
+
     return res.status(200).json({
       notes,
       total,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
+      categories,
     });
   } catch (error) {
     console.error("Error fetching notes:", error);
