@@ -3,6 +3,7 @@ import { AuthRequest } from "../types/user.type";
 import { AccountModel } from "../models/account.model";
 import { User } from "../models/users.model";
 import mongoose from "mongoose";
+import { combinedChartData } from "../utils/charts-data";
 
 export const getLastTransactions = async (req: AuthRequest, res: Response) => {
   try {
@@ -80,6 +81,16 @@ export const addTransaction = async (req: AuthRequest, res: Response) => {
       message: "Transaction added successfully",
       transactions: account?.transactions,
     });
+  } catch (error) {
+    console.error("Error adding transaction:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const initialData = (req: AuthRequest, res: Response) => {
+  try {
+    const chartsData = combinedChartData;
+    res.status(200).send(chartsData);
   } catch (error) {
     console.error("Error adding transaction:", error);
     return res.status(500).json({ message: "Internal server error" });

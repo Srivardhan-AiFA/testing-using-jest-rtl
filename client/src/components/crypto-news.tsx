@@ -10,7 +10,13 @@ export default function CryptoNews() {
         <Search size={15} className="cursor-pointer" />
       </div>
       <div className="flex gap-8 mt-10">
-        <div className="h-26 min-w-43 rounded-md bg-gray-700"></div>
+        <div className="h-26 min-w-43">
+          <img
+            className="rounded-md"
+            src="https://www.bcbgroup.com/wp-content/uploads/2021/12/Embryo-12-1.jpg"
+            alt=""
+          />
+        </div>
         <div>
           <h5 className="font-semibold">
             10 Things you must know before trading in crypto currency

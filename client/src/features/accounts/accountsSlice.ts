@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import type {
+  InitialDataItem,
   LastTransactionsResponse,
   Transaction,
   TransactionState,
@@ -11,6 +12,7 @@ const initialState: TransactionState = {
   error: null,
   transactions: [],
   message: "",
+  initialData: [],
 };
 
 const transactionsSlice = createSlice({
@@ -48,6 +50,20 @@ const transactionsSlice = createSlice({
       })
 
       .addCase(getLastTransactions.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Error";
+      })
+
+      .addCase(getInitialData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getInitialData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.initialData = action.payload.initialData;
+      })
+
+      .addCase(getInitialData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Error";
       });
@@ -108,3 +124,32 @@ export const getLastTransactions = createAsyncThunk<
     return rejectWithValue("Fetching transactions failed");
   }
 });
+
+export const getInitialData = createAsyncThunk<
+  { initialData: InitialDataItem[] }, // return type
+  void, // argument type
+  { rejectValue: string } // reject type
+>(
+  "accounts/getInitialData", // sliceName/actionName
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        return rejectWithValue("No token found");
+      }
+
+      const res = await axios.get<InitialDataItem[]>(
+        `${import.meta.env.VITE_BACKEND_URL}/accounts/getInitialData`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      return { initialData: res.data };
+    } catch (error) {
+      console.error(error);
+      return rejectWithValue("Fetching initial data failed");
+    }
+  }
+);

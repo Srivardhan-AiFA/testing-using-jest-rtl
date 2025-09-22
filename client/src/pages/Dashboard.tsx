@@ -1,65 +1,52 @@
-import type { AppDispatch } from "@/app/store";
+import type { AppDispatch, RootState } from "@/app/store";
 import AccountsInformation from "@/components/accounts-information";
 import { AppSidebar } from "@/components/app-sidebar";
 import CardChart from "@/components/card-chart";
 import CardChartDetaild from "@/components/card-chart-detaild";
 import CardChartHistory from "@/components/card-chart-history";
+import { ChartLineDots } from "@/components/chart-line-dots";
 import CryptoNews from "@/components/crypto-news";
 import CurrencyCalculator from "@/components/currency-calculator";
 import Downloads from "@/components/downloads";
 import NavDashboard from "@/components/nav-dashboard";
 import RefferToFriends from "@/components/reffer-to-friends";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { getLastTransactions } from "@/features/accounts/accountsSlice";
+import {
+  getInitialData,
+  getLastTransactions,
+} from "@/features/accounts/accountsSlice";
 import { getAllUsers } from "@/features/sevices/serviceSlice";
-import type { ChartData } from "@/types/chart.types";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+
+export type ChartData = {
+  month: string;
+  desktop: number;
+};
+
+export type CardChartData = {
+  displayName: string;
+  trend: "up" | "down";
+  trendRate: number;
+  startColor: string;
+  stopColor: string;
+  type: "linear" | "natural" | "step";
+  money: number;
+  chartData: ChartData[];
+};
 
 export default function Dashboard() {
-  const chartData1: ChartData[] = [
-    { month: "January", desktop: 186 },
-    { month: "February", desktop: 305 },
-    { month: "March", desktop: 237 },
-    { month: "April", desktop: 73 },
-    { month: "May", desktop: 209 },
-    { month: "June", desktop: 214 },
-  ];
-
-  const chartData2: ChartData[] = [
-    { month: "January", desktop: 129 },
-    { month: "February", desktop: 222 },
-    { month: "March", desktop: 98 },
-    { month: "April", desktop: 187 },
-    { month: "May", desktop: 154 },
-    { month: "June", desktop: 276 },
-  ];
-
-  const chartData3: ChartData[] = [
-    { month: "January", desktop: 310 },
-    { month: "February", desktop: 144 },
-    { month: "March", desktop: 201 },
-    { month: "April", desktop: 89 },
-    { month: "May", desktop: 260 },
-    { month: "June", desktop: 178 },
-  ];
-
-  const chartData4: ChartData[] = [
-    { month: "January", desktop: 75 },
-    { month: "February", desktop: 132 },
-    { month: "March", desktop: 199 },
-    { month: "April", desktop: 310 },
-    { month: "May", desktop: 245 },
-    { month: "June", desktop: 158 },
-  ];
-
   const dispatch: AppDispatch = useDispatch();
+  const initialData = useSelector<RootState, CardChartData[]>(
+    // @ts-expect-error array to obj
+    (state) => state.accounts.initialData
+  );
 
   useEffect(() => {
     dispatch(getLastTransactions());
     dispatch(getAllUsers());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    dispatch(getInitialData());
+  }, [dispatch]);
 
   return (
     <SidebarProvider>
@@ -68,56 +55,47 @@ export default function Dashboard() {
         <header className="bg-gradient-to-r from-blue-800 to-blue-400">
           <NavDashboard />
         </header>
+
         <div className="w-full mt-5 px-5 mb-10">
-          <div className=" border-1 p-3 mx-5 rounded-sm font-semibold">
+          <div className="border-1 p-3 mx-5 rounded-sm font-semibold">
             Crypto
           </div>
-          <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-4 mt-5 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
-            <CardChart
-              chartData={chartData1}
-              money={204}
-              trend="up"
-              trendRate={23}
-              displayName="SOL"
-              startColor="#121261"
-              stopColor="#407CFF"
-              type="linear"
-            />
-            <CardChart
-              chartData={chartData2}
-              money={1264}
-              trend="up"
-              trendRate={12}
-              displayName="ETH"
-              startColor="#A60040"
-              stopColor="#FF9E36"
-              type="natural"
-            />
-            <CardChart
-              chartData={chartData3}
-              money={88495}
-              trend="down"
-              trendRate={3}
-              displayName="BTC"
-              startColor="#040075"
-              stopColor="#FF0062"
-              type="linear"
-            />
-            <CardChart
-              chartData={chartData4}
-              money={1.01}
-              trend="up"
-              trendRate={9}
-              displayName="USDT"
-              startColor=""
-              stopColor=""
-              type="step"
-            />
+
+          <div className="grid grid-cols-4 mt-5 gap-4 px-4 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+            {initialData?.slice(0, 3).map((item, index) => (
+              <CardChart
+                key={index}
+                chartData={item.chartData}
+                money={item.money}
+                trend={item.trend}
+                trendRate={item.trendRate}
+                displayName={item.displayName}
+                startColor={item.startColor}
+                stopColor={item.stopColor}
+                type={item.type}
+              />
+            ))}
+
+            {initialData?.slice(3, 4).map((item, index) => (
+              <ChartLineDots
+                key={index}
+                chartData={item.chartData}
+                money={item.money}
+                trend={item.trend}
+                trendRate={item.trendRate}
+                displayName={item.displayName}
+                startColor={item.startColor}
+                stopColor={item.stopColor}
+                type={item.type}
+              />
+            ))}
           </div>
-          <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-2 mt-5 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+
+          <div className="grid grid-cols-2 mt-5 gap-4 px-4 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
             <CardChartDetaild />
             <CardChartHistory />
           </div>
+
           <div className="grid grid-cols-12 gap-5 mx-5 mt-5">
             <div className="col-span-5 border-2 p-3 rounded-sm">
               <AccountsInformation />
@@ -129,6 +107,7 @@ export default function Dashboard() {
               <CurrencyCalculator />
             </div>
           </div>
+
           <div className="grid grid-cols-12 gap-5 mx-5 mt-5">
             <div className="col-span-8 border-2 rounded-md p-7">
               <CryptoNews />
