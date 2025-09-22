@@ -166,7 +166,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <ThemeProvider defaultTheme="light">
-        <SidebarFooter>
+        <SidebarFooter className="bg-[#242424] text-gray-200">
           <NavUser user={data.user} />
         </SidebarFooter>
       </ThemeProvider>

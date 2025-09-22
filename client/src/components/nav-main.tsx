@@ -31,8 +31,10 @@ export function NavMain({
   }[];
 }) {
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel className="uppercase text-xs">Main</SidebarGroupLabel>
+    <SidebarGroup className="bg-[#242424]">
+      <SidebarGroupLabel className="uppercase text-xs bg-[#303030] text-gray-300 rounded-xs">
+        Main
+      </SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
@@ -45,7 +47,9 @@ export function NavMain({
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton tooltip={item.title}>
                   {item.icon && <item.icon />}
-                  <span className="text-xs font-semibold">{item.title}</span>
+                  <span className="text-xs font-semibold text-gray-200">
+                    {item.title}
+                  </span>
                   <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
@@ -55,7 +59,9 @@ export function NavMain({
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton asChild>
                         <a href={subItem.url}>
-                          <span className="text-xs">{subItem.title}</span>
+                          <span className="text-xs text-gray-50">
+                            {subItem.title}
+                          </span>
                         </a>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>

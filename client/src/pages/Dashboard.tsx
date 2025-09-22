@@ -65,7 +65,7 @@ export default function Dashboard() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="bg-[#242424]">
+        <header className="bg-gradient-to-r from-blue-800 to-blue-400">
           <NavDashboard />
         </header>
         <div className="w-full mt-5 px-5 mb-10">
