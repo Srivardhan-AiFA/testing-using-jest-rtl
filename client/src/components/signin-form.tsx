@@ -38,7 +38,8 @@ export function SigninForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <form
         onSubmit={(e) => {
-          e.preventDefault(), handleSubmit();
+          e.preventDefault();
+          handleSubmit();
         }}
       >
         <div className="flex flex-col gap-6">
@@ -53,7 +54,7 @@ export function SigninForm({
               <span className="sr-only">Acme Inc.</span>
             </a>
             <h1 className="text-xl font-bold">
-              Welcome to <span className="underline">Notly</span>.
+              Welcome to <span className="underline">Notely</span>.
             </h1>
           </div>
           <div className="flex flex-col gap-6">

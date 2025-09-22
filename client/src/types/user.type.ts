@@ -20,9 +20,19 @@ export type SingleNote = {
 };
 
 export type Note = {
+  notes: SingleNote[];
   loading: boolean;
   error: string | null;
-  notes: SingleNote[];
   message: string;
   categories: string[];
+  total: number;
+  totalPages: number;
+  currentPage: number;
+};
+
+export type GetNotesResponse = {
+  notes: SingleNote[];
+  total: number;
+  totalPages: number;
+  currentPage: number;
 };

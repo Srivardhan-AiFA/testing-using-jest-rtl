@@ -1,13 +1,16 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { Note, SingleNote } from "../../types/user.type";
+import type { GetNotesResponse, Note, SingleNote } from "../../types/user.type";
 import axios from "axios";
 
 const initialState: Note = {
+  notes: [],
   loading: false,
   error: null,
-  notes: [] as SingleNote[],
   message: "",
   categories: [],
+  total: 0,
+  totalPages: 0,
+  currentPage: 1,
 };
 
 export const addFavorite = createAsyncThunk<
@@ -65,34 +68,46 @@ export const addCategory = createAsyncThunk<
 });
 
 export const getNotes = createAsyncThunk<
-  { notes: SingleNote[]; categories: string[] }, // return both
-  { category: string },
+  {
+    notes: SingleNote[];
+    categories: string[];
+    total: number;
+    totalPages: number;
+    currentPage: number;
+  },
+  { category: string; page: number; limit: number },
   { rejectValue: string }
->("notes/getNotes", async ({ category }, { rejectWithValue }) => {
+>("notes/getNotes", async ({ category, page, limit }, { rejectWithValue }) => {
   try {
     const token = localStorage.getItem("token");
     const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     };
 
-    const res = await axios.get<SingleNote[]>(
-      `${import.meta.env.VITE_BACKEND_URL}/notes/getall/${category}`,
+    const res = await axios.get<GetNotesResponse>(
+      `${
+        import.meta.env.VITE_BACKEND_URL
+      }/notes/getall/${category}?page=${page}&limit=${limit}`,
       config
     );
 
-    const notes: SingleNote[] = res.data;
+    const notes: SingleNote[] = res.data.notes;
+    const total: number = res.data.total;
+    const totalPages: number = res.data.totalPages;
+    const currentPage: number = res.data.currentPage;
 
     let categories: string[] = [];
-
-    if (category === "all" && Array.isArray(notes)) {
-      categories = Array.from(
-        new Set(notes.map((note) => note.category))
-      ).sort();
+    if (category === "all" && page === 1 && Array.isArray(notes)) {
+      categories = Array.from(new Set(notes.map((note) => note.category))).sort(
+        (a, b) => {
+          if (a === "all") return -1;
+          if (b === "all") return 1;
+          return a.localeCompare(b);
+        }
+      );
     }
 
-    return { notes, categories };
+    return { notes, categories, total, totalPages, currentPage };
   } catch (error) {
     console.log(error);
     return rejectWithValue("Getting Notes Failed");
@@ -161,7 +176,7 @@ export const addNote = createAsyncThunk(
         note,
         config
       );
-      return res.data;
+      return res.data as SingleNote;
     } catch (error) {
       console.log(error);
       return rejectWithValue("Getting Notes Failed");
@@ -181,7 +196,7 @@ export const noteSlice = createSlice({
       })
       .addCase(addNote.fulfilled, (state, action) => {
         state.loading = false;
-        state.notes.push(action.payload as SingleNote);
+        state.notes = [action.payload, ...state.notes];
       })
       .addCase(addNote.rejected, (state, action) => {
         state.loading = false;
@@ -198,10 +213,15 @@ export const noteSlice = createSlice({
       .addCase(getNotes.fulfilled, (state, action) => {
         state.loading = false;
         state.notes = action.payload.notes;
+        state.total = action.payload.total;
+        state.totalPages = action.payload.totalPages;
+        state.currentPage = action.payload.currentPage;
+
         if (action.payload.categories.length !== 0) {
           state.categories = action.payload.categories;
         }
       })
+
       .addCase(getNotes.rejected, (state, action) => {
         state.loading = false;
         state.error =

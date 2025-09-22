@@ -15,7 +15,26 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
 export default function Dashboard() {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const {
+    notes = [],
+    categories = [],
+    loading,
+    error,
+    totalPages = 1,
+  } = useSelector((state: RootState) => state.notes);
+
   const [note, setNote] = useState<SingleNote>({
     _id: "",
     title: "",
@@ -27,24 +46,18 @@ export default function Dashboard() {
     updatedAt: "",
   });
 
-  const {
-    notes = [],
-    categories = [],
-    loading,
-    error,
-  } = useSelector((state: RootState) => state.notes);
-  const [filteredNotes, setFilteredNotes] = useState<SingleNote[]>(notes);
-
-  const [activeCategory, setActiveCategory] = useState<string>("all");
-
-  const [isAddingNewCategory, setIsAddingNewCategory] = useState(false);
-
   const [text, setText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const dispatch = useDispatch<AppDispatch>();
 
+  const [filteredNotes, setFilteredNotes] = useState<SingleNote[]>([]);
+  const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [isAddingNewCategory, setIsAddingNewCategory] = useState(false);
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
+  const [page, setPage] = useState<number>(1);
+  const [limit] = useState<number>(12);
+
+  // Adjust textarea height
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -52,19 +65,22 @@ export default function Dashboard() {
     }
   }, [text]);
 
+  // Filter notes by favorite toggle
   useEffect(() => {
-    setFilteredNotes(notes);
-  }, [notes]);
+    if (Array.isArray(notes)) {
+      let updatedNotes = [...notes];
+      if (showOnlyFavorites)
+        updatedNotes = updatedNotes.filter((n) => n.isFavorite);
+      setFilteredNotes(updatedNotes);
+    } else {
+      setFilteredNotes([]);
+    }
+  }, [notes, showOnlyFavorites]);
 
-  const fetchNotes = (category: string = "all") => {
-    console.log(category);
-    dispatch(getNotes({ category: category }));
-  };
-
+  // Fetch notes whenever category or page changes
   useEffect(() => {
-    fetchNotes("all");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    dispatch(getNotes({ category: activeCategory, page, limit }));
+  }, [activeCategory, page, dispatch, limit]);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);
@@ -81,18 +97,26 @@ export default function Dashboard() {
   };
 
   const handleFilterWithFavorite = () => {
-    const newShowOnlyFavorites = !showOnlyFavorites;
-
-    const favNotes = notes.filter((note) =>
-      newShowOnlyFavorites ? note.isFavorite : true
-    );
-
-    setFilteredNotes(favNotes);
-    setShowOnlyFavorites(newShowOnlyFavorites);
+    setShowOnlyFavorites((prev) => !prev);
   };
+
+  // Prepare categories for display
+  const displayCategories = Array.from(new Set(categories));
+  if (!displayCategories.includes("all")) displayCategories.unshift("all");
+
+  // Pagination handlers
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handleNext = () => handlePageChange(page + 1);
+  const handlePrev = () => handlePageChange(page - 1);
 
   return (
     <div className="px-20">
+      {/* Note Input Section */}
       <div className="border-2 max-w-1/2 m-auto mt-10 p-3 rounded-md">
         <form
           onSubmit={(e) => {
@@ -107,7 +131,6 @@ export default function Dashboard() {
             value={note.title}
             onChange={(e) => setNote({ ...note, title: e.target.value })}
           />
-
           <textarea
             ref={textareaRef}
             value={text}
@@ -116,8 +139,6 @@ export default function Dashboard() {
             rows={1}
             placeholder="Take a note..."
           />
-
-          {/* Category Dropdown */}
           <div className="mt-2">
             <Select
               value={isAddingNewCategory ? "__new__" : note.category}
@@ -135,7 +156,7 @@ export default function Dashboard() {
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
-                {categories.map((category, index) => (
+                {displayCategories.map((category, index) => (
                   <SelectItem
                     key={index}
                     value={category}
@@ -147,7 +168,6 @@ export default function Dashboard() {
                 <SelectItem value="__new__">+ Add new category</SelectItem>
               </SelectContent>
             </Select>
-
             {isAddingNewCategory && (
               <Input
                 type="text"
@@ -158,7 +178,6 @@ export default function Dashboard() {
               />
             )}
           </div>
-
           <Button
             type="submit"
             className="px-4 bg-[#77a4eb] hover:bg-blue-400 text-gray-900 outfit text-xs cursor-pointer rounded mt-2"
@@ -168,41 +187,38 @@ export default function Dashboard() {
         </form>
       </div>
 
-      <div>
-        <div className="flex flex-wrap gap-4 mt-6 px-40">
-          <h4 className="mt-1.5 font-semibold text-sm">Categories:</h4>
-          {categories.map((category, index) => {
-            return (
-              <div key={index}>
-                <p
-                  onClick={() => {
-                    setShowOnlyFavorites(false);
-                    setActiveCategory(category);
-                    fetchNotes(category);
-                  }}
-                  className={`px-3 py-1 cursor-pointer rounded-2xl border min-w-16 text-center text-xs font-semibold mt-1 uppercase
-                    ${
-                      activeCategory === category ? "bg-gray-200" : "bg-white"
-                    }`}
-                >
-                  {category}
-                </p>
-              </div>
-            );
-          })}
-          <span className="border-r-2 mt-1" />
-          <p
-            onClick={handleFilterWithFavorite}
-            className={`px-3 py-1 cursor-pointer rounded-2xl min-w-16 text-center text-xs font-semibold mt-1 uppercase border-1 border-red-400 ${
-              showOnlyFavorites ? "bg-red-500" : "bg-[#f36457]"
-            }`}
-          >
-            Favorites
-          </p>
-        </div>
+      {/* Categories Filter */}
+      <div className="flex flex-wrap gap-4 mt-6 px-40">
+        <h4 className="mt-1.5 font-semibold text-sm">Categories:</h4>
+        {displayCategories.map((category, index) => (
+          <div key={index}>
+            <p
+              onClick={() => {
+                setShowOnlyFavorites(false);
+                setActiveCategory(category);
+                setPage(1); // reset page whenever category changes
+              }}
+              className={`px-3 py-1 cursor-pointer rounded-2xl border min-w-16 text-center text-xs font-semibold mt-1 uppercase ${
+                activeCategory === category ? "bg-gray-200" : "bg-white"
+              }`}
+            >
+              {category}
+            </p>
+          </div>
+        ))}
+        <span className="border-r-2 mt-1" />
+        <p
+          onClick={handleFilterWithFavorite}
+          className={`px-3 py-1 cursor-pointer rounded-2xl min-w-16 text-center text-xs font-semibold mt-1 uppercase border-1 border-red-400 ${
+            showOnlyFavorites ? "bg-red-500" : "bg-[#f36457]"
+          }`}
+        >
+          Favorites
+        </p>
       </div>
 
-      <div className="reletive mb-10 flex flex-col items-center">
+      {/* Notes List */}
+      <div className="relative mb-10 flex flex-col items-center w-full">
         {loading ? (
           <div className="flex justify-center items-center h-60">
             <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent border-solid rounded-full animate-spin"></div>
@@ -212,13 +228,13 @@ export default function Dashboard() {
         ) : filteredNotes.length === 0 ? (
           <p className="text-gray-500 text-center mt-4">No notes available</p>
         ) : (
-          <div className="flex flex-wrap gap-4 mt-6 justify-center w-full">
+          <div className="flex flex-wrap gap-4 mt-5 justify-center w-full">
             {filteredNotes.map((note, index) => {
               const colors = ["#77a4eb", "#56df7a", "#f3c849", "#f36457"];
               const bgColor = colors[index % colors.length];
               return (
                 <Note
-                  key={note._id || index} // better key if you have _id
+                  key={note._id || index}
                   note={note}
                   bgColor={bgColor}
                   setActiveCategory={setActiveCategory}
@@ -227,6 +243,57 @@ export default function Dashboard() {
             })}
           </div>
         )}
+        <div className="flex justify-center items-center mt-5 gap-5">
+          <div>
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2">
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious
+                        className="cursor-pointer"
+                        onClick={handlePrev}
+                      />
+                    </PaginationItem>
+
+                    {Array.from({ length: totalPages }, (_, i) => (
+                      <PaginationItem key={i}>
+                        <PaginationLink
+                          onClick={() => handlePageChange(i + 1)}
+                          className={`${
+                            page === i + 1 ? "bg-blue-400 text-white" : ""
+                          } cursor-pointer`}
+                        >
+                          {i + 1}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+
+                    <PaginationItem>
+                      <PaginationNext
+                        className="cursor-pointer"
+                        onClick={handleNext}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
+          </div>
+          {/* <div>
+          <Select>
+            <SelectTrigger className="w-[100px]">
+              <SelectValue placeholder="Theme" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="light">Light</SelectItem>
+              <SelectItem value="dark">Dark</SelectItem>
+              <SelectItem value="system">System</SelectItem>
+            </SelectContent>
+          </Select>
+        </div> */}
+        </div>
       </div>
     </div>
   );

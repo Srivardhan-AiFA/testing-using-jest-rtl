@@ -24,12 +24,27 @@ export const getAllNotes = async (req: AuthRequest, res: Response) => {
     const userId = req.userId;
     const category = req.params.category || "all";
 
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 12;
+
     const query: any = { userId };
     if (category !== "all") query.category = category;
 
-    const notes = await Note.find(query).sort({ createdAt: -1 });
+    // total notes count (for pagination metadata)
+    const total = await Note.countDocuments(query);
 
-    return res.status(200).json(notes);
+    // actual notes for this page
+    const notes = await Note.find(query)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    return res.status(200).json({
+      notes,
+      total,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+    });
   } catch (error) {
     console.error("Error fetching notes:", error);
     return res.status(500).json({ message: "Internal Server Error" });
