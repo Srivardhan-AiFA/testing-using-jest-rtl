@@ -12,7 +12,7 @@ export const eventSchema = z
       .array(
         z.object({
           email: z
-            .email({ message: "Enter email address" })
+            .email({ message: "Enter a valid email address" })
             .regex(/^[A-Za-z0-9._%+-]+@(gmail\.com)$/, {
               message: "Only @gmail.com allowed",
             }),
