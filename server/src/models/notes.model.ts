@@ -8,12 +8,15 @@ const noteSchema = new mongoose.Schema<NoteType>(
       ref: "User",
       required: true,
     },
-    title: { type: String },
     content: { type: String, required: true },
-    category: { type: String, default: "all" },
-    isFavorite: { type: Boolean, default: false },
+    role: { type: String, require: true },
+    name: { type: String, require: true },
+    email: { type: String, require: true },
   },
   { timestamps: true }
 );
 
-export const Note = mongoose.model<NoteType>("Note", noteSchema);
+export const Note = mongoose.model<NoteType>(
+  "notes/rbac/email-pass",
+  noteSchema
+);

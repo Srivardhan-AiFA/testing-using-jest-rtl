@@ -6,11 +6,6 @@ const initialState: Note = {
   notes: [],
   loading: false,
   error: null,
-  message: "",
-  categories: [],
-  total: 0,
-  totalPages: 0,
-  currentPage: 1,
 };
 
 export const addFavorite = createAsyncThunk<
@@ -70,14 +65,10 @@ export const addCategory = createAsyncThunk<
 export const getNotes = createAsyncThunk<
   {
     notes: SingleNote[];
-    categories: string[];
-    total: number;
-    totalPages: number;
-    currentPage: number;
   },
-  { category: string; page: number; limit: number },
+  void,
   { rejectValue: string }
->("notes/getNotes", async ({ category, page, limit }, { rejectWithValue }) => {
+>("notes/getNotes", async (_, { rejectWithValue }) => {
   try {
     const token = localStorage.getItem("token");
     const config = {
@@ -85,19 +76,11 @@ export const getNotes = createAsyncThunk<
     };
 
     const res = await axios.get<GetNotesResponse>(
-      `${
-        import.meta.env.VITE_BACKEND_URL
-      }/notes/getall/${category}?page=${page}&limit=${limit}`,
+      `${import.meta.env.VITE_BACKEND_URL}/features/getAllNotes`,
       config
     );
 
-    const notes: SingleNote[] = res.data.notes;
-    const total: number = res.data.total;
-    const totalPages: number = res.data.totalPages;
-    const currentPage: number = res.data.currentPage;
-    const categories: string[] = res.data.categories;
-
-    return { notes, categories, total, totalPages, currentPage };
+    return res.data;
   } catch (error) {
     console.log(error);
     return rejectWithValue("Getting Notes Failed");
@@ -153,7 +136,7 @@ export const deleteNote = createAsyncThunk<
 
 export const addNote = createAsyncThunk(
   "note/addNote",
-  async (note: SingleNote, { rejectWithValue }) => {
+  async (content: string, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("token");
       const config = {
@@ -161,9 +144,9 @@ export const addNote = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       };
-      const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/notes/create`,
-        note,
+      const res = await axios.post<SingleNote>(
+        `${import.meta.env.VITE_BACKEND_URL}/features/create`,
+        { content: content },
         config
       );
       return res.data as SingleNote;
@@ -202,113 +185,15 @@ export const noteSlice = createSlice({
       })
       .addCase(getNotes.fulfilled, (state, action) => {
         state.loading = false;
-        state.notes = action.payload.notes;
-        state.total = action.payload.total;
-        state.totalPages = action.payload.totalPages;
-        state.currentPage = action.payload.currentPage;
-        state.categories = action.payload.categories;
+        // @ts-expect-error typecheck
+        state.notes = action.payload;
       })
-
       .addCase(getNotes.rejected, (state, action) => {
         state.loading = false;
         state.error =
           (action.payload as string) ||
           action.error.message ||
           "unable to add Note";
-      })
-
-      .addCase(editNote.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(editNote.fulfilled, (state, action) => {
-        state.loading = false;
-        state.message = action.payload.message;
-
-        const updatedNote = action.payload.updatedNote;
-        const index = state.notes.findIndex((n) => n._id === updatedNote._id);
-
-        if (index !== -1) {
-          state.notes[index] = updatedNote;
-        }
-      })
-      .addCase(editNote.rejected, (state, action) => {
-        state.loading = false;
-        state.error =
-          (action.payload as string) ||
-          action.error.message ||
-          "unable to add Note";
-      })
-
-      .addCase(deleteNote.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(deleteNote.fulfilled, (state, action) => {
-        state.loading = false;
-        state.message = action.payload.message;
-
-        const deletedNote = action.payload.deletedNote;
-        const index = state.notes.findIndex((n) => n._id === deletedNote._id);
-
-        if (index !== -1) {
-          state.notes.splice(index, 1);
-        }
-      })
-      .addCase(deleteNote.rejected, (state, action) => {
-        state.loading = false;
-        state.error =
-          (action.payload as string) ||
-          action.error.message ||
-          "unable to add Note";
-      })
-
-      .addCase(addFavorite.pending, (state, action) => {
-        state.error = null;
-        const id = action.meta.arg.id;
-        const index = state.notes.findIndex((n) => n._id === id);
-
-        if (index !== -1) {
-          state.notes[index].isFavorite = !state.notes[index].isFavorite;
-        }
-      })
-      .addCase(addFavorite.fulfilled, (state, action) => {
-        state.message = action.payload.message;
-      })
-      .addCase(addFavorite.rejected, (state, action) => {
-        state.error =
-          (action.payload as string) ||
-          action.error.message ||
-          "unable to add Favriote";
-        const id = action.meta.arg.id;
-        const index = state.notes.findIndex((n) => n._id === id);
-
-        if (index !== -1) {
-          state.notes[index].isFavorite = !state.notes[index].isFavorite;
-        }
-      })
-
-      .addCase(addCategory.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(addCategory.fulfilled, (state, action) => {
-        state.loading = false;
-        state.message = action.payload.message;
-
-        const addFav = action.payload;
-        const index = state.notes.findIndex((n) => n._id === addFav.id);
-
-        if (index !== -1) {
-          state.notes[index].category = action.payload.category;
-        }
-      })
-      .addCase(addCategory.rejected, (state, action) => {
-        state.loading = false;
-        state.error =
-          (action.payload as string) ||
-          action.error.message ||
-          "unable to add Category";
       });
   },
 });

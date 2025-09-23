@@ -23,12 +23,9 @@ export const protectedRoute = (
       return;
     }
 
-    if (typeof decoded === "object" && "userId" in decoded) {
-      req.userId = (decoded as JwtPayload & { userId: string }).userId;
-      next();
-    } else {
-      res.status(401).json({ message: "Invalid token payload" });
-    }
+    req.id = decoded.id;
+    req.role = decoded.role;
+    next();
   } catch (err) {
     res.status(401).json({ message: "Invalid token" });
   }

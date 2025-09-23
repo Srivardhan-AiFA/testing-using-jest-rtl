@@ -8,32 +8,41 @@ export type User = {
   error: string;
 };
 
-export type SingleNote = {
-  _id: string;
-  title: string;
-  content: string;
-  category: string;
-  isFavorite: boolean;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
 export type Note = {
   notes: SingleNote[];
   loading: boolean;
   error: string | null;
-  message: string;
-  categories: string[];
-  total: number;
-  totalPages: number;
-  currentPage: number;
+};
+
+export type SingleNote = {
+  _id: string;
+  userId: string;
+  content: string;
+  role: "user" | "admin" | "moderator";
+  name: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type GetNotesResponse = {
   notes: SingleNote[];
-  total: number;
-  totalPages: number;
-  currentPage: number;
-  categories: string[];
+};
+
+export type NoteRBAC = {
+  id: string;
+  name: string;
+  content: string;
+  email: string;
+};
+
+export type getUsersType = {
+  _id: string;
+  username: string;
+  email: string;
+  role: string;
+};
+
+export type Role = {
+  role: "user" | "admin" | "moderator";
 };

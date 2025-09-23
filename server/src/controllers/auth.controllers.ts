@@ -22,7 +22,7 @@ export const signup = async (req: Request, res: Response) => {
       password: await hashedPassword,
     });
 
-    const token = generateToken(user._id.toString());
+    const token = generateToken({ id: user._id.toString(), role: "user" });
 
     return res.status(201).json({
       user: {
@@ -30,6 +30,7 @@ export const signup = async (req: Request, res: Response) => {
         username: user.username,
         email: user.email,
         token,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -50,13 +51,14 @@ export const signin = async (req: Request, res: Response) => {
     if (!isPasswordValid) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
-    const token = generateToken(user._id.toString());
+    const token = generateToken({ id: user._id.toString(), role: user.role });
     return res.status(200).json({
       user: {
         _id: user._id,
         username: user.username,
         email: user.email,
         token,
+        role: user.role,
       },
     });
   } catch (error) {
