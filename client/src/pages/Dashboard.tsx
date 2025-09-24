@@ -7,15 +7,6 @@ import type { SingleNote } from "@/types/user.type";
 import Note from "@/components/note";
 
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -32,8 +23,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { DialogClose } from "@radix-ui/react-dialog";
-import { Label } from "@/components/ui/label";
 
 export default function Dashboard() {
   const dispatch = useDispatch<AppDispatch>();
@@ -44,7 +33,7 @@ export default function Dashboard() {
     loading,
     error,
     totalPages = 1,
-    total,
+    // total,
   } = useSelector((state: RootState) => state.notes);
 
   const [note, setNote] = useState<SingleNote>({
@@ -92,16 +81,16 @@ export default function Dashboard() {
   // Fetch notes whenever category or page changes
   useEffect(() => {
     dispatch(getNotes({ category: activeCategory, page, limit }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch]);
+  }, [dispatch, page, limit, activeCategory]);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);
     setNote((prev) => ({ ...prev, content: e.target.value }));
   };
 
-  const handleLimitChange = () => {
-    dispatch(getNotes({ category: activeCategory, page, limit }));
+  const handleLimitChange = (newLimit: number) => {
+    setPage(1);
+    setLimit(newLimit);
   };
 
   const handleSubmit = () => {
@@ -233,55 +222,6 @@ export default function Dashboard() {
           >
             Favorites
           </p>
-          <Dialog>
-            <form onSubmit={handleLimitChange}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="secondary"
-                  className="rounded-full cursor-pointer"
-                >
-                  Customize
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Customize The Notes Displayed</DialogTitle>
-                </DialogHeader>
-                <div className="grid gap-2">
-                  <p className="text-gray-600 font-medium text-sm">
-                    Total Notes: {total}
-                  </p>
-                  <p className="text-gray-600 font-medium text-sm">
-                    Per Page Notes: {limit}
-                  </p>
-                  <div className="grid gap-3">
-                    <Label htmlFor="username-1">Notes</Label>
-                    <Input
-                      id="limit"
-                      name="limit"
-                      defaultValue="@peduarte"
-                      type="number"
-                      max={total}
-                      onChange={(e) => {
-                        setLimit(Number(e.target.value));
-                      }}
-                      className="outline-0"
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DialogClose>
-                  <DialogClose asChild>
-                    <Button type="submit" onClick={handleLimitChange}>
-                      Save changes
-                    </Button>
-                  </DialogClose>
-                </DialogFooter>
-              </DialogContent>
-            </form>
-          </Dialog>
         </div>
       </div>
 
@@ -346,21 +286,25 @@ export default function Dashboard() {
                     </PaginationItem>
                   </PaginationContent>
                 </Pagination>
+                <div>
+                  <Select
+                    value={String(limit)}
+                    onValueChange={(val) => handleLimitChange(Number(val))}
+                  >
+                    {" "}
+                    <SelectTrigger className="w-[100px]">
+                      <SelectValue placeholder="View" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="6">6</SelectItem>
+                      <SelectItem value="12">12</SelectItem>
+                      <SelectItem value="18">18</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             )}
           </div>
-          {/* <div>
-          <Select>
-            <SelectTrigger className="w-[100px]">
-              <SelectValue placeholder="Theme" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="light">Light</SelectItem>
-              <SelectItem value="dark">Dark</SelectItem>
-              <SelectItem value="system">System</SelectItem>
-            </SelectContent>
-          </Select>
-        </div> */}
         </div>
       </div>
     </div>
