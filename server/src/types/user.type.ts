@@ -2,9 +2,9 @@ import { Request } from "express";
 import { JwtPayload } from "jsonwebtoken";
 
 export type UserType = {
+  id: string;
   username: string;
   email: string;
-  password: string;
   role: "user" | "admin" | "moderator";
 };
 

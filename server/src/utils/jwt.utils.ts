@@ -5,9 +5,17 @@ export interface JwtPayload {
   role: "user" | "admin" | "moderator";
 }
 
-export const generateToken = ({ id, role }: { id: string; role: string }) => {
+export const generateToken = ({
+  id,
+  username,
+  role,
+}: {
+  id: string;
+  username: string;
+  role: string;
+}) => {
   const SECRET = process.env.JWT_SECRET;
-  const token = jwt.sign({ id, role }, SECRET as string, {
+  const token = jwt.sign({ id, username, role }, SECRET as string, {
     expiresIn: "1d",
   });
   return token;

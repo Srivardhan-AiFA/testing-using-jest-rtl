@@ -1,28 +1,56 @@
-import type { AppDispatch, RootState } from "@/app/store";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import jwt_decode from "jwt-decode";
 import AdminDashboard from "./AdminDashboard";
 import ModeratorDashboard from "./ModeratorDashboard";
 import UserDashboard from "./UserDashboard";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { getNotes } from "@/features/notes/noteSlice";
+
+interface JwtPayload {
+  id: string;
+  username: string;
+  role: "user" | "admin" | "moderator";
+}
 
 export default function Dashboard() {
-  const user = useSelector((state: RootState) => state.user.user);
+  const navigate = useNavigate();
 
-  const dispatch = useDispatch<AppDispatch>();
+  const [user, setUser] = useState<JwtPayload | null>(null);
+  const [, setToken] = useState<string>("");
+
+  // Get token from URL or localStorage and decode
   useEffect(() => {
-    dispatch(getNotes());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const params = new URLSearchParams(window.location.search);
+    const tokenFromURL = params.get("token");
+
+    const jwtToken = tokenFromURL || localStorage.getItem("token");
+
+    if (!jwtToken) {
+      navigate("/login"); // redirect if no token
+      return;
+    }
+
+    setToken(jwtToken);
+    localStorage.setItem("token", jwtToken);
+
+    try {
+      const decoded: JwtPayload = jwt_decode(jwtToken);
+      setUser(decoded);
+    } catch (err) {
+      console.error("Invalid token", err);
+      navigate("/login");
+    }
+
+    // Clean URL
+    if (tokenFromURL) {
+      window.history.replaceState({}, document.title, "/dashboard");
+    }
+  }, [navigate]);
 
   if (!user) {
-    return (
-      <div>
-        <h1>Unauthorized</h1>
-      </div>
-    );
+    return <div>Loading...</div>;
   }
 
+  // Render dashboard based on role
   const renderDashboard = () => {
     switch (user.role) {
       case "user":
@@ -50,7 +78,7 @@ export default function Dashboard() {
           {user.role}
         </h5>
       </div>
-      <div>{renderDashboard()}</div>
+      <div className="mt-8">{renderDashboard()}</div>
     </div>
   );
 }

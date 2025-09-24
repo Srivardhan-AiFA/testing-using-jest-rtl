@@ -1,12 +1,17 @@
 import express, { Request, Response } from "express";
 import session from "express-session";
-import passport from "passport";
-import { Profile, Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { config } from "dotenv";
+import passport from "./config/passport";
+import authRoutes from "./routes/auth";
+import noteRoutes from "./routes/notes.routes";
+import modRoutes from "./routes/mod.routes";
+import adminRoutes from "./routes/admin.routes";
+import { connectDB } from "./config/db.config";
 
 config();
 
 const app = express();
+connectDB();
 
 // Session middleware
 app.use(
@@ -20,53 +25,15 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Configure Google Strategy
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_ID as string,
-      clientSecret: process.env.GOOGLE_SECRET as string,
-      callbackURL: "http://localhost:3000/auth/google/callback",
-    },
-    (accessToken: string, refreshToken: string, profile: Profile, done) => {
-      // Save/find user in DB here
-      return done(null, profile);
-    }
-  )
-);
-
-// Serialize user to session
-passport.serializeUser((user, done) => {
-  done(null, user);
-});
-
-// Deserialize user from session
-passport.deserializeUser((user: Express.User, done) => {
-  done(null, user);
-});
-
 // Routes
 app.get("/", (req: Request, res: Response) => {
   res.send("Home Page");
 });
 
-app.get(
-  "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
-
-app.get(
-  "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
-  (req: Request, res: Response) => {
-    res.redirect("/profile");
-  }
-);
-
-app.get("/profile", (req: Request, res: Response) => {
-  if (!req.user) return res.redirect("/");
-  res.send(`Hello, ${(req.user as any).displayName}`);
-});
+app.use("/auth", authRoutes);
+app.use("/mod", modRoutes);
+app.use("/admin", adminRoutes);
+app.use("/notes", noteRoutes);
 
 // Start server
 app.listen(3000, () => {
