@@ -12,6 +12,7 @@ export type Note = {
   notes: SingleNote[];
   loading: boolean;
   error: string | null;
+  users: getUsersType[];
 };
 
 export type SingleNote = {

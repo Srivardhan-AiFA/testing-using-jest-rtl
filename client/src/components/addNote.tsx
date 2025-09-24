@@ -19,17 +19,24 @@ export default function AddNote() {
   return (
     <div>
       <div className="mt-5">
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col items-center gap-3"
+        >
           <Input
             type="text"
-            placeholder="Enter your note here"
-            className="outline-0"
+            placeholder="Talk here"
+            className="outline-0 max-w-1/2"
             required
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
-          <Button variant="outline" type="submit" className="mt-2">
-            Add note
+          <Button
+            variant="outline"
+            type="submit"
+            className="w-full cursor-pointer max-w-1/2"
+          >
+            Add
           </Button>
         </form>
       </div>

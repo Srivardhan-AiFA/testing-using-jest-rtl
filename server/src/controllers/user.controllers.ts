@@ -35,6 +35,7 @@ export const createNote = async (req: AuthRequest, res: Response) => {
       content: note.content,
       email: note.email,
       userId: note.userId,
+      role: note.role,
     });
   } catch (error) {
     console.error("Error creating note:", error);

@@ -40,9 +40,15 @@ export default function Dashboard() {
     <div className="max-w-8/12 mx-auto">
       <div className="mt-5">
         <h1 className="text-6xl">
-          Welcome <span className="font-medium">{user.role}</span>
+          Welcome{" "}
+          <span className="font-medium">
+            {user.username[0].toUpperCase()}
+            {user.username.slice(1)}
+          </span>
         </h1>
-        <h5 className="text-gray-700 text-xl">{user.username}</h5>
+        <h5 className="text-gray-500 text-md font-semibold ml-1 uppercase">
+          {user.role}
+        </h5>
       </div>
       <div>{renderDashboard()}</div>
     </div>

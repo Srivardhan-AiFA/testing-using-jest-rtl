@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { AuthRequest } from "../types/user.type";
 import { User } from "../models/users.model";
+import { Note } from "../models/notes.model";
 
 // Literal union type for roles
 const ALLOWED_ROLES = ["user", "admin", "moderator"] as const;
@@ -44,6 +45,8 @@ export const promoteUser = async (req: AuthRequest, res: Response) => {
 
     user.role = roleToSet;
     await user.save();
+
+    await Note.updateMany({ userId: user._id }, { $set: { role: roleToSet } });
 
     return res.status(200).json({
       id: user._id,

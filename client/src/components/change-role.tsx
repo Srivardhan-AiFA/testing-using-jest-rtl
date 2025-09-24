@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { changeRoleState } from "@/features/auth/authSlice";
+import { changeRoleState } from "@/features/notes/noteSlice";
 import type { getUsersType } from "@/types/user.type";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
