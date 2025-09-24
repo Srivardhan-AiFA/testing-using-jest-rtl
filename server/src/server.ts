@@ -1,36 +1,74 @@
-import express from "express";
-import dotenv from "dotenv";
-import cors from "cors";
+import express, { Request, Response } from "express";
+import session from "express-session";
+import passport from "passport";
+import { Profile, Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { config } from "dotenv";
 
-// database
-import { connectDB } from "./config/db.config";
+config();
 
-// routes
-import authRoutes from "./routes/auth.routes";
-import modRoutes from "./routes/mod.routes";
-import featureRoutes from "./routes/notes.routes";
+const app = express();
 
-// rate limiters
-import { globalLimiter } from "./middlewares/rateLimit";
-
-dotenv.config();
-connectDB();
-
-export const app = express();
-
-app.use(globalLimiter);
+// Session middleware
 app.use(
-  cors({
-    origin: "http://localhost:5173",
+  session({
+    secret: process.env.SESSION_SECRET as string,
+    resave: false,
+    saveUninitialized: false,
   })
 );
-app.use(express.json());
 
-app.use("/auth", authRoutes);
-app.use("/mod", modRoutes);
-app.use("/features", featureRoutes);
+app.use(passport.initialize());
+app.use(passport.session());
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log("SERVER STARTED");
+// Configure Google Strategy
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_ID as string,
+      clientSecret: process.env.GOOGLE_SECRET as string,
+      callbackURL: "http://localhost:3000/auth/google/callback",
+    },
+    (accessToken: string, refreshToken: string, profile: Profile, done) => {
+      // Save/find user in DB here
+      return done(null, profile);
+    }
+  )
+);
+
+// Serialize user to session
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+// Deserialize user from session
+passport.deserializeUser((user: Express.User, done) => {
+  done(null, user);
+});
+
+// Routes
+app.get("/", (req: Request, res: Response) => {
+  res.send("Home Page");
+});
+
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  (req: Request, res: Response) => {
+    res.redirect("/profile");
+  }
+);
+
+app.get("/profile", (req: Request, res: Response) => {
+  if (!req.user) return res.redirect("/");
+  res.send(`Hello, ${(req.user as any).displayName}`);
+});
+
+// Start server
+app.listen(3000, () => {
+  console.log("Server running on http://localhost:3000");
 });

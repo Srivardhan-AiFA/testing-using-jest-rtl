@@ -13,7 +13,4 @@ const userSchema = new mongoose.Schema<UserType>(
   }
 );
 
-export const User = mongoose.model<UserType>(
-  "users/rbac/email-pass",
-  userSchema
-);
+export const User = mongoose.model<UserType>("users/rbac/oauth", userSchema);

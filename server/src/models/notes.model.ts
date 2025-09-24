@@ -16,7 +16,4 @@ const noteSchema = new mongoose.Schema<NoteType>(
   { timestamps: true }
 );
 
-export const Note = mongoose.model<NoteType>(
-  "notes/rbac/email-pass",
-  noteSchema
-);
+export const Note = mongoose.model<NoteType>("notes/rbac/oauth", noteSchema);
