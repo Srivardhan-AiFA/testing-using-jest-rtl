@@ -22,11 +22,11 @@ export const signup = async (req: Request, res: Response) => {
       password: await hashedPassword,
     });
 
-    const token = generateToken({ id: user._id.toString(), role: "user" });
+    const token = generateToken({ id: user.id.toString(), role: "user" });
 
     return res.status(201).json({
       user: {
-        _id: user._id,
+        id: user.id,
         username: user.username,
         email: user.email,
         token,
@@ -51,10 +51,10 @@ export const signin = async (req: Request, res: Response) => {
     if (!isPasswordValid) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
-    const token = generateToken({ id: user._id.toString(), role: user.role });
+    const token = generateToken({ id: user.id.toString(), role: user.role });
     return res.status(200).json({
       user: {
-        _id: user._id,
+        id: user.id,
         username: user.username,
         email: user.email,
         token,

@@ -10,16 +10,18 @@ export default function DisplayNotes() {
   const notes = useSelector((state: RootState) => state.notes.notes ?? []);
   const user = useSelector((state: RootState) => state.user.user);
 
+  console.log("In Dispaly notes");
+
   if (!user) {
     return (
       <div>
-        <p>Unauthorized</p>
+        <p>Unauthorized in display</p>
       </div>
     );
   }
 
   function canDelete(user: UserType, note: SingleNote) {
-    if (user?.role === "user") return note.userId === user._id;
+    if (user?.role === "user") return note.userId === user.id;
     if (user?.role === "admin") return note.role !== "moderator";
     if (user?.role === "moderator") return true;
     return false;
@@ -32,11 +34,8 @@ export default function DisplayNotes() {
 
   return (
     <div className={`grid ${gridColsClass} gap-4 mt-5`}>
-      {notes.map((note) => (
-        <div
-          key={note._id}
-          className="p-4 border rounded-lg shadow-sm bg-white"
-        >
+      {notes.map((note, index) => (
+        <div key={index} className="p-4 border rounded-lg shadow-sm bg-white">
           <div className="flex justify-between items-center mb-2">
             <h2 className="text-lg font-medium">{note.name}</h2>
             <span

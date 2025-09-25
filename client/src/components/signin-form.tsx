@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "@/app/store";
-import { signinAPI } from "@/features/auth/authSlice";
+import { updateUser } from "@/features/auth/authSlice";
 
 export function SigninForm({
   className,
@@ -27,7 +27,7 @@ export function SigninForm({
 
   const handleSubmit = async () => {
     try {
-      await dispatch(signinAPI(user)).unwrap();
+      dispatch(updateUser(user));
       navigate("/dashboard");
     } catch (error) {
       setError(error as string);

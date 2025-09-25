@@ -1,13 +1,12 @@
 import { Eye, EyeClosed, GalleryVerticalEnd } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { signupAPI } from "../features/auth/authSlice";
-import type { AppDispatch, RootState } from "@/app/store";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "@/app/store";
+import { updateUser } from "@/features/auth/authSlice";
 
 export function SignupForm({
   className,
@@ -24,11 +23,9 @@ export function SignupForm({
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const { loading } = useSelector((state: RootState) => state.user);
-
   const handleSubmit = async () => {
     try {
-      await dispatch(signupAPI(user)).unwrap();
+      await dispatch(updateUser(user));
       navigate("/signin"); // only runs if signup succeeded
     } catch (error) {
       setError(error as string); // error comes from rejectWithValue
@@ -115,14 +112,6 @@ export function SignupForm({
               </div>
             </div>
           </div>
-
-          <Button
-            type="submit"
-            className="w-full cursor-pointer"
-            disabled={loading}
-          >
-            {loading ? "Signing up..." : "Sign up"}
-          </Button>
         </div>
       </form>
 

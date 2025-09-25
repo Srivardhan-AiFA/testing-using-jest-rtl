@@ -7,6 +7,7 @@ import noteRoutes from "./routes/notes.routes";
 import modRoutes from "./routes/mod.routes";
 import adminRoutes from "./routes/admin.routes";
 import { connectDB } from "./config/db.config";
+import cors from "cors";
 
 config();
 
@@ -14,6 +15,9 @@ const app = express();
 connectDB();
 
 // Session middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(
   session({
     secret: process.env.SESSION_SECRET as string,
@@ -33,7 +37,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/auth", authRoutes);
 app.use("/mod", modRoutes);
 app.use("/admin", adminRoutes);
-app.use("/notes", noteRoutes);
+app.use("/features", noteRoutes);
 
 // Start server
 app.listen(3000, () => {

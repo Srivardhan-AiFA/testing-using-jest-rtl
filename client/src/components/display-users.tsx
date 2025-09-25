@@ -17,8 +17,6 @@ import { getUsers } from "@/features/notes/noteSlice";
 
 export default function DisplayUsers() {
   const users = useSelector((state: RootState) => state.notes.users);
-  const loading = useSelector((state: RootState) => state.user.loading);
-  const error = useSelector((state: RootState) => state.user.error);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -38,14 +36,6 @@ export default function DisplayUsers() {
     },
     {}
   );
-
-  if (loading) {
-    return <p className="text-gray-500">Loading users...</p>;
-  }
-
-  if (error) {
-    return <p className="text-red-500">{error}</p>;
-  }
 
   return (
     <div className="w-full mt-5 overflow-x-auto">
@@ -69,7 +59,7 @@ export default function DisplayUsers() {
               </TableCell>
             </TableRow>
             {groupedUsers[role].map((user) => (
-              <TableRow key={user._id}>
+              <TableRow key={user.id}>
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell className="text-right">

@@ -5,7 +5,7 @@ const noteSchema = new mongoose.Schema<NoteType>(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "users/rbac/oauth",
       required: true,
     },
     content: { type: String, required: true },

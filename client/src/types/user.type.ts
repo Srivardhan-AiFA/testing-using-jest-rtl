@@ -16,7 +16,7 @@ export type Note = {
 };
 
 export type SingleNote = {
-  _id: string;
+  id: string;
   userId: string;
   content: string;
   role: "user" | "admin" | "moderator";
@@ -38,7 +38,7 @@ export type NoteRBAC = {
 };
 
 export type getUsersType = {
-  _id: string;
+  id: string;
   username: string;
   email: string;
   role: string;
