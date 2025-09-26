@@ -23,6 +23,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Label } from "@radix-ui/react-label";
 
 export default function Dashboard() {
   const dispatch = useDispatch<AppDispatch>();
@@ -226,7 +227,7 @@ export default function Dashboard() {
       </div>
 
       {/* Notes List */}
-      <div className="relative mb-10 flex flex-col items-center w-full">
+      <div className="relative mb-10 flex flex-col items-center min-h">
         {loading ? (
           <div className="flex justify-center items-center h-60">
             <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent border-solid rounded-full animate-spin"></div>
@@ -251,11 +252,11 @@ export default function Dashboard() {
             })}
           </div>
         )}
-        <div className="flex justify-center items-center mt-5 gap-5">
+        <div className="flex justify-center items-end h-full mt-5">
           <div>
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2">
+              <div className="flex h-full gap-10">
                 <Pagination>
                   <PaginationContent>
                     <PaginationItem>
@@ -291,10 +292,12 @@ export default function Dashboard() {
                     value={String(limit)}
                     onValueChange={(val) => handleLimitChange(Number(val))}
                   >
-                    {" "}
-                    <SelectTrigger className="w-[100px]">
-                      <SelectValue placeholder="View" />
-                    </SelectTrigger>
+                    <div className="flex items-center min-w-50 gap-3">
+                      <Label>Per page</Label>{" "}
+                      <SelectTrigger className="w-[100px]">
+                        <SelectValue placeholder="View" />
+                      </SelectTrigger>
+                    </div>
                     <SelectContent>
                       <SelectItem value="6">6</SelectItem>
                       <SelectItem value="12">12</SelectItem>
