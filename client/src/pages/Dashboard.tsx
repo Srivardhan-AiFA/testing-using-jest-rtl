@@ -227,7 +227,7 @@ export default function Dashboard() {
       </div>
 
       {/* Notes List */}
-      <div className="relative mb-10 flex flex-col items-center min-h">
+      <div className="relative mb-10 flex flex-col items-center">
         {loading ? (
           <div className="flex justify-center items-center h-60">
             <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent border-solid rounded-full animate-spin"></div>

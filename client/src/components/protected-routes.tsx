@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 
 export default function ProtectedRoutes() {
-  const isLoggedin = useSelector((state: RootState) => state.user);
+  const isLoggedin = useSelector((state: RootState) => state.user.isLoggedin);
   if (isLoggedin) {
     return <Outlet />;
   }
