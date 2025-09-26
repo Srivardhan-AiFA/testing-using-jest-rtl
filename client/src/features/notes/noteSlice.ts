@@ -188,7 +188,7 @@ export const getUsers = createAsyncThunk<
 
 export const changeRoleState = createAsyncThunk<
   getUsersType,
-  { email: string; role: string },
+  { email: string; role: "user" | "admin" | "moderator" },
   { rejectValue: string }
 >("auth/changerole", async ({ email, role }, { rejectWithValue }) => {
   try {
@@ -292,6 +292,11 @@ export const noteSlice = createSlice({
         );
         if (userIndex !== -1) {
           state.users[userIndex].role = updatedUser.role;
+          state.notes = state.notes.map((note) =>
+            note.userId === updatedUser.id
+              ? { ...note, role: updatedUser.role }
+              : note
+          );
         }
       })
       .addCase(changeRoleState.rejected, (state, action) => {

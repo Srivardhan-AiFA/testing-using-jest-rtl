@@ -10,8 +10,6 @@ export default function DisplayNotes() {
   const notes = useSelector((state: RootState) => state.notes.notes ?? []);
   const user = useSelector((state: RootState) => state.user.user);
 
-  console.log("In Dispaly notes");
-
   if (!user) {
     return (
       <div>
@@ -23,8 +21,14 @@ export default function DisplayNotes() {
   function canDelete(user: UserType, note: SingleNote) {
     if (user?.role === "user") return note.userId === user.id;
     if (user?.role === "admin") return note.role !== "moderator";
-    if (user?.role === "moderator") return true;
+    if (user?.role === "moderator") return note.role !== "moderator";
     return false;
+  }
+  function canUpdate(user: UserType, note: SingleNote) {
+    // if (user?.role === "user") return note.userId === user.id;
+    // if (user?.role === "admin") return note.userId === user.id;
+    // if (user?.role === "moderator") return note.role !== "moderator";
+    return user?.id === note.userId;
   }
 
   const gridColsClass =
@@ -52,13 +56,23 @@ export default function DisplayNotes() {
           </div>
           <p className="text-gray-700">{note.content}</p>
 
-          {canDelete(user, note) && (
-            <div>
-              <Button variant="destructive" className="mt-5">
-                Delete
-              </Button>
-            </div>
-          )}
+          <div className="flex gap-2">
+            {canDelete(user, note) && (
+              <div>
+                <Button variant="destructive" className="mt-5 cursor-pointer">
+                  Delete
+                </Button>
+              </div>
+            )}
+
+            {canUpdate(user, note) && (
+              <div>
+                <Button variant="outline" className="mt-5 cursor-pointer">
+                  Edit
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       ))}
     </div>

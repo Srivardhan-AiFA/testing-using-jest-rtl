@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import AdminDashboard from "./AdminDashboard";
 import ModeratorDashboard from "./ModeratorDashboard";
 import UserDashboard from "./UserDashboard";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "@/app/store";
-import { updateUser } from "@/features/auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/app/store";
+import { setUser, updateUser } from "@/features/auth/authSlice";
 import { getNotes } from "@/features/notes/noteSlice";
 
 export interface JwtPayload {
@@ -16,67 +16,49 @@ export interface JwtPayload {
 }
 
 export default function Dashboard() {
-  console.log(1);
   const navigate = useNavigate();
-
-  const [user, setUser] = useState<JwtPayload | null>(null);
+  const user = useSelector((state: RootState) => state.user.user);
 
   const dispatch = useDispatch<AppDispatch>();
 
   // Get token from URL or localStorage and decode
   useEffect(() => {
     // Get token once from URL or localStorage
-    console.log(2);
 
     const params = new URLSearchParams(window.location.search);
     const tokenFromURL = params.get("token");
     const storedToken = localStorage.getItem("token");
 
     const jwtToken = tokenFromURL || storedToken;
-    console.log("jwtToken", jwtToken);
 
     if (!jwtToken) {
       navigate("/signin");
       return;
     }
+    localStorage.setItem("token", jwtToken);
 
-    // Save only if new
     if (tokenFromURL) {
-      console.log(3);
       localStorage.setItem("token", jwtToken);
-      // Strip the token from the URL after storing
       window.history.replaceState({}, document.title, "/dashboard");
     }
 
     try {
-      console.log(4);
-
       const decoded: JwtPayload = jwt_decode(jwtToken);
-      console.log("decoded", decoded);
       setUser(decoded);
-      console.log("user none");
-      console.log("user", user);
       dispatch(updateUser(decoded));
     } catch (err) {
-      console.log(5);
-
       console.error("Invalid token", err);
       navigate("/signin");
     }
   }, [navigate, dispatch]);
-  console.log(6);
 
   useEffect(() => {
-    console.log(7);
-
-    dispatch(getNotes()); // ✅ only once
+    dispatch(getNotes());
   }, [dispatch]);
-  console.log(8);
 
   useEffect(() => {
     if (user) {
       setUser(user);
-      console.log("user after update:", user);
     }
   }, [user]);
 

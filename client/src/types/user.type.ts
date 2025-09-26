@@ -41,7 +41,7 @@ export type getUsersType = {
   id: string;
   username: string;
   email: string;
-  role: string;
+  role: "user" | "admin" | "moderator";
 };
 
 export type Role = {

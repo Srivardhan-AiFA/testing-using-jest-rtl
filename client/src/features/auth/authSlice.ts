@@ -5,8 +5,6 @@ export interface AuthState {
   user: {
     id: string;
     username: string;
-    email: string;
-    token: string;
     role: Role;
   } | null;
   isLoggedin: boolean;
@@ -27,16 +25,11 @@ export const authSlice = createSlice({
       action: PayloadAction<{
         id: string;
         username: string;
-        email: string;
-        token: string;
         role: Role;
       } | null>
     ) => {
       state.user = action.payload;
       state.isLoggedin = !!action.payload;
-      if (action.payload?.token) {
-        localStorage.setItem("token", action.payload.token);
-      }
     },
     updateUser: (state, action: PayloadAction<Partial<AuthState["user"]>>) => {
       if (state.user) {

@@ -27,11 +27,13 @@ export default function DisplayUsers() {
   if (!users || users.length === 0) {
     return <p className="text-gray-500">No users found</p>;
   }
-  const groupedUsers = users.reduce<Record<string, getUsersType[]>>(
-    (acc, user) => {
-      if (user.email === "mod@gmail.com") return acc;
-      if (!acc[user.role]) acc[user.role] = [];
-      acc[user.role].push(user);
+  const roleOrder = ["user", "admin", "moderator"];
+
+  const groupedUsers = roleOrder.reduce<Record<string, getUsersType[]>>(
+    (acc, role) => {
+      acc[role] = users.filter(
+        (user) => user.role === role && user.email !== "mod@gmail.com"
+      );
       return acc;
     },
     {}
@@ -58,8 +60,8 @@ export default function DisplayUsers() {
                 {role}s
               </TableCell>
             </TableRow>
-            {groupedUsers[role].map((user) => (
-              <TableRow key={user.id}>
+            {groupedUsers[role].map((user, index) => (
+              <TableRow key={index}>
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell className="text-right">
