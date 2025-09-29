@@ -7,5 +7,5 @@ export default function ProtectedRoutes() {
   if (isLoggedin) {
     return <Outlet />;
   }
-  return <Navigate to="/signin" replace />;
+  return <Navigate to="/" replace />;
 }

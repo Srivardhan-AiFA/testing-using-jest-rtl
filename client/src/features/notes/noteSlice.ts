@@ -3,6 +3,7 @@ import type {
   GetNotesResponse,
   getUsersType,
   Note,
+  Role,
   SingleNote,
 } from "../../types/user.type";
 import axios from "axios";
@@ -188,7 +189,7 @@ export const getUsers = createAsyncThunk<
 
 export const changeRoleState = createAsyncThunk<
   getUsersType,
-  { email: string; role: "user" | "admin" | "moderator" },
+  { email: string; role: Role },
   { rejectValue: string }
 >("auth/changerole", async ({ email, role }, { rejectWithValue }) => {
   try {

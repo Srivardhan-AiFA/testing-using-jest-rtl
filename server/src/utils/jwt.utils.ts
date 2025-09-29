@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
+import { Role } from "../types/user.type";
 
 export interface JwtPayload {
   id: string;
-  role: "user" | "admin" | "moderator";
+  role: Role;
 }
 
 export const generateToken = ({

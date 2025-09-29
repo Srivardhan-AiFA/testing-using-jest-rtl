@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { changeRoleState } from "@/features/notes/noteSlice";
-import type { getUsersType } from "@/types/user.type";
+import type { getUsersType, Role } from "@/types/user.type";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 
@@ -28,9 +28,7 @@ type ChangeRoleProps = {
 
 export function ChangeRole({ userdata }: ChangeRoleProps) {
   const dispatch = useDispatch<AppDispatch>();
-  const [role, setRole] = useState<"user" | "admin" | "moderator">(
-    userdata.role
-  );
+  const [role, setRole] = useState<Role>(userdata.role);
 
   const changeRole = () => {
     dispatch(changeRoleState({ email: userdata.email, role }));
@@ -58,12 +56,7 @@ export function ChangeRole({ userdata }: ChangeRoleProps) {
                 <span className="font-semibold">"{userdata.role}"</span>
               </p>
             </div>
-            <Select
-              value={role}
-              onValueChange={(val: "user" | "admin" | "moderator") =>
-                setRole(val)
-              }
-            >
+            <Select value={role} onValueChange={(val) => setRole(val as Role)}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder={userdata.role} />
               </SelectTrigger>

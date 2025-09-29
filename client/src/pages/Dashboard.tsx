@@ -8,11 +8,12 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/app/store";
 import { setUser, updateUser } from "@/features/auth/authSlice";
 import { getNotes } from "@/features/notes/noteSlice";
+import type { Role } from "@/types/user.type";
 
 export interface JwtPayload {
   id: string;
   username: string;
-  role: "user" | "admin" | "moderator";
+  role: Role;
 }
 
 export default function Dashboard() {

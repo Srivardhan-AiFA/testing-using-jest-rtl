@@ -15,16 +15,16 @@ export type Note = {
   users: getUsersType[];
 };
 
-export type SingleNote = {
+export interface SingleNote {
   id: string;
   userId: string;
   content: string;
-  role: "user" | "admin" | "moderator";
   name: string;
+  role: Role;
   email: string;
   createdAt: string;
   updatedAt: string;
-};
+}
 
 export type GetNotesResponse = {
   notes: SingleNote[];
@@ -37,13 +37,11 @@ export type NoteRBAC = {
   email: string;
 };
 
-export type getUsersType = {
+export interface getUsersType {
   id: string;
   username: string;
   email: string;
-  role: "user" | "admin" | "moderator";
-};
+  role: Role;
+}
 
-export type Role = {
-  role: "user" | "admin" | "moderator";
-};
+export type Role = "user" | "admin" | "moderator";
